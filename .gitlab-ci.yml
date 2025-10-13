@@ -1,0 +1,64 @@
+include:
+  - project: 'tools/renovate-bot/renovate-runner'
+    file: '/templates/renovate.gitlab-ci.yml'
+
+renovate:
+
+  image: ${CI_RENOVATE_IMAGE}
+
+  variables:
+    RENOVATE_EXTRA_FLAGS: '$CI_PROJECT_PATH'
+
+  rules:
+    - if: '$RENOVATE_TOKEN == null || $RENOVATE_TOKEN == ""'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+
+.gradle-job:
+
+  image: gradle:8.8.0-jdk21
+  tags: [docker]
+
+  cache:
+    key:
+      files:
+        - gradle/wrapper/gradle-wrapper.properties
+    paths:
+      - cache/caches/
+      - cache/notifications/
+      - cache/wrapper/
+      - .gradle/
+      - composeApp/app/build/
+
+build:
+  extends: .gradle-job
+
+  stage: build
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE != "schedule" && ($CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "development" || $CI_PIPELINE_SOURCE == "merge_request_event")'
+
+  script:
+    - gradle build
+
+quality:
+  extends: .gradle-job
+
+  stage: test
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE != "schedule" && ($CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "development" || $CI_PIPELINE_SOURCE == "merge_request_event")'
+
+  script:
+    - gradle detektMain --no-daemon
+
+unit-test:
+  extends: .gradle-job
+
+  stage: test
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE != "schedule" && ($CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "development" || $CI_PIPELINE_SOURCE == "merge_request_event")'
+
+  script:
+    - gradle test --no-daemon
