@@ -1,0 +1,12 @@
+name: psychological-testing-main
+
+services:
+
+  psql:
+    image: postgres:latest
+
+    ports:
+      - "4343:5432"
+
+    environment:
+      POSTGRES_PASSWORD: "postgres"

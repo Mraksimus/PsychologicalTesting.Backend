@@ -11,6 +11,8 @@ koin-compiler = "2.0.0"
 exposed = "0.61.0"
 h2 = "2.2.224"
 postgres = "42.7.3"
+flyway = "11.9.0"
+hikaricp = "6.3.0"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -44,7 +46,13 @@ koin-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "ko
 
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-json = { module = "org.jetbrains.exposed:exposed-json", version.ref = "exposed" }
+exposed-migration = { module = "org.jetbrains.exposed:exposed-migration", version.ref = "exposed" }
 exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
 
-h2 = { module = "com.h2database:h2", version.ref = "h2" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
 postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+
+h2 = { module = "com.h2database:h2", version.ref = "h2" }

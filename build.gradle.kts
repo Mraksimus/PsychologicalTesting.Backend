@@ -50,10 +50,16 @@ dependencies {
 
     implementation(libs.exposed.core)
     implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.json)
+    implementation(libs.exposed.migration)
     implementation(libs.exposed.kotlin.datetime)
 
-    implementation(libs.h2)
+    implementation(libs.hikaricp)
     implementation(libs.postgres)
+    implementation(libs.flyway)
+    implementation(libs.flyway.postgresql)
+
+    implementation(libs.h2)
 
     ksp(libs.koin.compiler)
 
