@@ -1,5 +1,7 @@
 .gradle
 .idea
+.fleet
+.kotlin
 build
-run/development
+run
 .env

@@ -8,7 +8,7 @@ fun Application.configureDocs() = install(KtorDocs) {
 
     openApi {
 
-        version = "3"
+        version = "3.0.0"
 
         info {
             version = "1"
