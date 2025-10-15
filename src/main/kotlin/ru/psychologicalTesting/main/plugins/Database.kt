@@ -5,11 +5,8 @@ import io.ktor.server.application.Application
 import kotlinx.coroutines.Dispatchers
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.ExperimentalDatabaseMigrationApi
-import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.main.config.database.DatabaseConfig
 import javax.sql.DataSource
@@ -53,8 +50,9 @@ fun applyDatabaseMigrations(
  * !!! DO NOT COMMIT ACTUAL DATABASE CREDENTIALS !!!
  * !!! DO NOT FORGET TO COMMENT IT OUT BEFORE COMMITTING !!!
  */
-//@OptIn(ExperimentalDatabaseMigrationApi::class)
-//fun main() {
+
+// @OptIn(ExperimentalDatabaseMigrationApi::class)
+// fun main() {
 //
 //    val tables: Array<Table> = arrayOf(
 //
@@ -81,7 +79,7 @@ fun applyDatabaseMigrations(
 //        )
 //    }
 //
-//}
+// }
 
 suspend fun <R> suspendedTransaction(statement: Transaction.() -> R) = newSuspendedTransaction(
     context = Dispatchers.IO,
