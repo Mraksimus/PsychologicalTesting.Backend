@@ -9,6 +9,8 @@ import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.main.config.database.DatabaseConfig
+import ru.psychologicalTesting.main.infrastructure.models.TokenModel
+import ru.psychologicalTesting.main.infrastructure.models.UserModel
 import javax.sql.DataSource
 
 fun Application.configureDatabase() {
