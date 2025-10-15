@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.ktor)
     implementation(libs.koin.annotations)
+    ksp(libs.koin.compiler)
 
     implementation(libs.exposed.core)
     implementation(libs.exposed.jdbc)
@@ -61,7 +62,11 @@ dependencies {
 
     implementation(libs.h2)
 
-    ksp(libs.koin.compiler)
+    implementation(libs.akkurate.core)
+    implementation(libs.akkurate.ktor)
+    ksp(libs.akkurate.compiler)
+
+    implementation(libs.jbcrypt)
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 

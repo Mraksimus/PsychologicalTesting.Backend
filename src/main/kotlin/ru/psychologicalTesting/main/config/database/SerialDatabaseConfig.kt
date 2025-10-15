@@ -13,7 +13,7 @@ data class SerialDatabaseConfig(
     override val password: String? = null
 ) : DatabaseConfig {
 
-    companion object : ConfigFactory<DatabaseConfig>("config/database.conf") {
+    companion object : ConfigFactory<DatabaseConfig>("database.conf") {
 
         override fun load(path: String): DatabaseConfig {
             return deserialize<SerialDatabaseConfig>(path)

@@ -12,7 +12,7 @@ fun Application.configureDocs() = install(KtorDocs) {
 
         info {
             version = "1"
-            title = "Template project docs"
+            title = "Psychological testing"
         }
 
         server {
