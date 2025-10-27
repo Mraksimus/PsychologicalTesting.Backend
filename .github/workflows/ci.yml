@@ -65,7 +65,7 @@ jobs:
     if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main'
     env:
       DOCKER_USERNAME: ${{ github.actor }}
-      DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       CI_COMMIT_REF_NAME: ${{ github.ref_name }}
 
     steps:
@@ -100,6 +100,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ~/app/${{ github.ref_name }}
-            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker compose pull backend-main
             docker compose up -d
