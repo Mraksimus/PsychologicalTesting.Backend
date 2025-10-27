@@ -1,3 +1,5 @@
+import io.ktor.plugin.features.DockerImageRegistry
+
 plugins {
 
     alias(libs.plugins.kotlin)
@@ -34,12 +36,10 @@ dependencies {
     implementation(libs.ktor.server.swagger)
     implementation(libs.ktor.server.contentNegotiation)
 
-
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.java)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.contentNegotiation)
-
 
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.docs)
@@ -84,6 +84,24 @@ ksp {
 detekt {
     config.setFrom("detekt.yml")
     buildUponDefaultConfig = false
+}
+
+ktor {
+    docker {
+        localImageName = "psychologicaltesting-backend"
+
+        val branch = System.getenv("CI_COMMIT_REF_NAME") ?: "local"
+        imageTag = if (branch == "development") "development" else branch
+
+        jreVersion = JavaVersion.VERSION_21
+
+        externalRegistry = DockerImageRegistry.externalRegistry(
+            username = providers.environmentVariable("DOCKER_USERNAME"),
+            password = providers.environmentVariable("DOCKER_PASSWORD"),
+            hostname = provider { "ghcr.io" },
+            project = provider { "mraksimus/psychologicaltesting.backend" }
+        )
+    }
 }
 
 application {
