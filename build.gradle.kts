@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import io.ktor.plugin.features.DockerImageRegistry
 
 plugins {
@@ -107,6 +108,13 @@ ktor {
 application {
     mainClass = "ru.psychologicalTesting.main.AppKt"
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")
+}
+
+tasks.withType<ShadowJar> {
+    isZip64 = true
+    archiveFileName = "psychological-testing-all.jar"
+
+    mergeServiceFiles()
 }
 
 tasks {
