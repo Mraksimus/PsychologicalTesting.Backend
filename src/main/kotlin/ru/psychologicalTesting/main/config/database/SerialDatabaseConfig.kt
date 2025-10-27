@@ -1,7 +1,6 @@
 package ru.psychologicalTesting.main.config.database
 
 import kotlinx.serialization.Serializable
-import ru.psychologicalTesting.main.config.ConfigFactory
 
 @Serializable
 data class SerialDatabaseConfig(
@@ -11,14 +10,4 @@ data class SerialDatabaseConfig(
     override val username: String? = null,
     override val database: String? = null,
     override val password: String? = null
-) : DatabaseConfig {
-
-    companion object : ConfigFactory<DatabaseConfig>("database.conf") {
-
-        override fun load(path: String): DatabaseConfig {
-            return deserialize<SerialDatabaseConfig>(path)
-        }
-
-    }
-
-}
+) : DatabaseConfig
