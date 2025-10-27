@@ -11,6 +11,8 @@ koin-compiler = "2.0.0"
 exposed = "0.61.0"
 h2 = "2.2.224"
 postgres = "42.7.3"
+akkurate = "0.11.0"
+jbcrypt = "0.4"
 flyway = "11.9.0"
 hikaricp = "6.3.0"
 
@@ -54,5 +56,11 @@ hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
 postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+
+akkurate-core = { module = "dev.nesk.akkurate:akkurate-core", version.ref = "akkurate" }
+akkurate-ktor = { module = "dev.nesk.akkurate:akkurate-ktor-server", version.ref = "akkurate" }
+akkurate-compiler = { module = "dev.nesk.akkurate:akkurate-ksp-plugin", version.ref = "akkurate" }
+
+jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrypt" }
 
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
