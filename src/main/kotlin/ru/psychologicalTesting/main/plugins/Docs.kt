@@ -16,7 +16,7 @@ fun Application.configureDocs() = install(KtorDocs) {
         }
 
         server {
-            url = "http://localhost:1337"
+            url = "http://localhost:1488"
             description = "Local development server"
         }
 
