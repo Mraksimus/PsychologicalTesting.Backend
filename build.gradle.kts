@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import io.ktor.plugin.features.DockerImageRegistry
 
 plugins {
 
@@ -85,24 +84,6 @@ ksp {
 detekt {
     config.setFrom("detekt.yml")
     buildUponDefaultConfig = false
-}
-
-ktor {
-    docker {
-        localImageName = "psychologicaltesting-backend"
-
-        val branch = System.getenv("CI_COMMIT_REF_NAME") ?: "local"
-        imageTag = if (branch == "development") "development" else branch
-
-        jreVersion = JavaVersion.VERSION_21
-
-        externalRegistry = DockerImageRegistry.externalRegistry(
-            username = providers.environmentVariable("DOCKER_USERNAME"),
-            password = providers.environmentVariable("DOCKER_PASSWORD"),
-            hostname = provider { "ghcr.io" },
-            project = provider { "mraksimus/psychologicaltesting.backend" }
-        )
-    }
 }
 
 application {
