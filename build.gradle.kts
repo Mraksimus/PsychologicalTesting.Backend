@@ -99,6 +99,8 @@ ktor {
 
         jreVersion = JavaVersion.VERSION_21
 
+        imageTag = "latest"
+
         externalRegistry = DockerImageRegistry.externalRegistry(
             username = providers.environmentVariable("GITHUB_ACTOR"),
             password = providers.environmentVariable("GITHUB_TOKEN"),
