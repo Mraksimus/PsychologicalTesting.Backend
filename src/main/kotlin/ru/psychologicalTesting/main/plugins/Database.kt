@@ -37,7 +37,7 @@ fun applyDatabaseMigrations(
 
     val flyway = Flyway.configure()
         .dataSource(dataSource)
-        .locations("classpath:/migrations")
+        .locations("classpath:migrations")
         .baselineOnMigrate(true)
         .baselineVersion("1")
         .load()
