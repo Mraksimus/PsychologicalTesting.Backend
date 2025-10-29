@@ -91,16 +91,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: ⚒️ Build and push image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/amd64
-          push: true
-          tags: |
-            ghcr.io/mraksimus/psychologicaltesting.backend:${{ github.ref_name }}
-            ghcr.io/mraksimus/psychologicaltesting.backend:latest
-
       - name: 🔧 Restart application
         uses: appleboy/ssh-action@master
         with:
