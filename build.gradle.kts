@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import io.ktor.plugin.features.DockerImageRegistry
 
 plugins {
 
@@ -89,6 +90,29 @@ detekt {
 application {
     mainClass = "ru.psychologicalTesting.main.AppKt"
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")
+}
+
+ktor {
+    docker {
+
+        localImageName = "psychological-testing-main"
+
+        jreVersion = JavaVersion.VERSION_21
+
+        externalRegistry = DockerImageRegistry.externalRegistry(
+            username = providers.environmentVariable("GITHUB_ACTOR"),
+            password = providers.environmentVariable("GITHUB_TOKEN"),
+            hostname = provider { "ghcr.io" },
+            project = provider { "mraksimus/psychologicaltesting.backend" }
+        )
+
+    }
+}
+
+jib {
+    container {
+        mainClass = "ru.psychologicalTesting.main.AppKt"
+    }
 }
 
 tasks.withType<ShadowJar> {
