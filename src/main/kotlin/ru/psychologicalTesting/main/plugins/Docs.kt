@@ -16,6 +16,10 @@ fun Application.configureDocs() = install(KtorDocs) {
         }
 
         server {
+            url = "https://psychological-testing.mraksimus.ru"
+            description = "Remote development server"
+        }
+        server {
             url = "http://localhost:1488"
             description = "Local development server"
         }
