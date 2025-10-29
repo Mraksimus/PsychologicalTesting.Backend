@@ -1,7 +1,10 @@
 package ru.psychologicalTesting.main.infrastructure.repositories.authentication
 
+import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.lessEq
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.koin.core.annotation.Single
@@ -9,6 +12,7 @@ import ru.psychologicalTesting.main.extensions.deleteById
 import ru.psychologicalTesting.main.extensions.updateById
 import ru.psychologicalTesting.main.infrastructure.dto.Token
 import ru.psychologicalTesting.main.infrastructure.models.TokenModel
+import ru.psychologicalTesting.main.utils.now
 import java.util.UUID
 
 @Single
@@ -48,6 +52,12 @@ class ExposedTokenRepository : TokenRepository {
         }
 
         return affectedRows > 0
+    }
+
+    override fun clearExpired(): Boolean {
+        return TokenModel.deleteWhere {
+            TokenModel.expiresAt lessEq LocalDateTime.now()
+        } > 0
     }
 
     override fun delete(id: UUID) {
