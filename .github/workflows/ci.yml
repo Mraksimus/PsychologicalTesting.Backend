@@ -2,9 +2,13 @@ name: CI/CD
 
 on:
   push:
-    branches: [ main, development ]
+    branches:
+      - main
+    paths:
+      - 'main/**'
   pull_request:
-    branches: [ main, development ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -55,7 +59,7 @@ jobs:
       - run: chmod +x gradlew
       - run: ./gradlew test --build-cache --no-daemon
 
-  publish:
+  publish-main:
 
     runs-on: ubuntu-latest
 

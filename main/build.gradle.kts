@@ -1,3 +1,6 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import io.ktor.plugin.features.DockerImageRegistry
+
 plugins {
 
     alias(libs.plugins.kotlin)
@@ -11,9 +14,6 @@ plugins {
     id("application")
 
 }
-
-group = "ru.psychologicalTesting"
-version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -89,6 +89,38 @@ ksp {
 application {
     mainClass = "ru.psychologicalTesting.main.AppKt"
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")
+}
+
+ktor {
+    docker {
+
+        localImageName = "psychological-testing-main"
+
+        jreVersion = JavaVersion.VERSION_21
+
+        imageTag = "latest"
+
+        externalRegistry = DockerImageRegistry.externalRegistry(
+            username = providers.environmentVariable("GITHUB_ACTOR"),
+            password = providers.environmentVariable("GITHUB_TOKEN"),
+            hostname = provider { "ghcr.io" },
+            project = provider { "mraksimus/psychologicaltesting.backend" }
+        )
+
+    }
+}
+
+jib {
+    container {
+        mainClass = "ru.psychologicalTesting.main.AppKt"
+    }
+}
+
+tasks.withType<ShadowJar> {
+    isZip64 = true
+    archiveFileName = "psychological-testing-all.jar"
+
+    mergeServiceFiles()
 }
 
 tasks {
