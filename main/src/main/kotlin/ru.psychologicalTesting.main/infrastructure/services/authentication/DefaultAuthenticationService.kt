@@ -60,6 +60,8 @@ class DefaultAuthenticationService(
             return LoginResult.InvalidCredentials
         }
 
+        tokenRepository.clearExpired()
+
         return LoginResult.Success(
             token = generateToken(user.id)
         )

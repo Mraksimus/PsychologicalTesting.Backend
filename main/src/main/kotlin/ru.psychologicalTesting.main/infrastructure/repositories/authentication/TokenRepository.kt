@@ -16,6 +16,8 @@ interface TokenRepository {
         dto: Token
     ): Boolean
 
+    fun clearExpired(): Boolean
+
     fun delete(id: UUID)
 
 }
