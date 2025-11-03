@@ -15,17 +15,26 @@ import java.util.*
 class ExposedUserRepository : UserRepository {
 
     override fun create(
+        name: String,
+        surname: String,
+        patronymic: String?,
         email: String,
         password: String
     ): User {
 
         val insertedRow = UserModel.insert {
+            it[this.name] = name
+            it[this.surname] = surname
+            it[this.patronymic] = patronymic
             it[this.email] = email
             it[this.password] = password
         }
 
         return User(
             id = insertedRow[UserModel.id].value,
+            name = insertedRow[UserModel.name],
+            surname = insertedRow[UserModel.surname],
+            patronymic = insertedRow[UserModel.patronymic],
             email = insertedRow[UserModel.email],
             password = insertedRow[UserModel.password]
         )
@@ -59,6 +68,9 @@ class ExposedUserRepository : UserRepository {
             .update(
                 where = { UserModel.id eq user.id },
             ) {
+                it[name] = user.name
+                it[surname] = user.surname
+                it[patronymic] = user.patronymic
                 it[email] = user.email
                 it[password] = user.password
             }
@@ -77,6 +89,9 @@ class ExposedUserRepository : UserRepository {
 
     private fun ResultRow.toUser(): User = User(
         id = this[UserModel.id].value,
+        name = this[UserModel.name],
+        surname = this[UserModel.surname],
+        patronymic = this[UserModel.patronymic],
         email = this[UserModel.email],
         password = this[UserModel.password]
     )

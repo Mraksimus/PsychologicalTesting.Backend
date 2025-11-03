@@ -56,36 +56,36 @@ fun applyDatabaseMigrations(
  * !!! DO NOT FORGET TO COMMENT IT OUT BEFORE COMMITTING !!!
  */
 
-//@OptIn(ExperimentalDatabaseMigrationApi::class)
-//fun main() {
-//
-//    val tables: Array<Table> = arrayOf(
-//        TokenModel,
-//        UserModel,
-//    )
-//
-//    val host = System.getenv("DB_HOST") ?: "localhost"
-//    val port = System.getenv("DB_PORT") ?: "5432"
-//    val database = System.getenv("DB_NAME") ?: "postgres"
-//    val username = System.getenv("DB_USERNAME") ?: "postgres"
-//    val password = System.getenv("DB_PASSWORD") ?: "postgres"
-//
-//    Database.connect(
-//        url = "jdbc:postgresql://$host:$port/$database",
-//        user = username,
-//        password = password
-//    )
-//
-//    transaction {
-//        MigrationUtils.generateMigrationScript(
-//            tables = tables,
-//            scriptDirectory = "src/main/resources/migrations",
-//            // Make sure to change script name before generating, otherwise rollback the overridden file :)
-//            scriptName = "V1_init",
-//        )
-//    }
-//
-//}
+@OptIn(ExperimentalDatabaseMigrationApi::class)
+fun main() {
+
+    val tables: Array<Table> = arrayOf(
+        TokenModel,
+        UserModel,
+    )
+
+    val host = System.getenv("DB_HOST") ?: "localhost"
+    val port = System.getenv("DB_PORT") ?: "4343"
+    val database = System.getenv("DB_NAME") ?: "postgres"
+    val username = System.getenv("DB_USERNAME") ?: "postgres"
+    val password = System.getenv("DB_PASSWORD") ?: "postgres"
+
+    Database.connect(
+        url = "jdbc:postgresql://$host:$port/$database",
+        user = username,
+        password = password
+    )
+
+    transaction {
+        MigrationUtils.generateMigrationScript(
+            tables = tables,
+            scriptDirectory = "main/src/main/resources/migrations",
+            // Make sure to change script name before generating, otherwise rollback the overridden file :)
+            scriptName = "V2__add_user_full_name",
+        )
+    }
+
+}
 
 suspend fun <R> suspendedTransaction(statement: Transaction.() -> R) = newSuspendedTransaction(
     context = Dispatchers.IO,

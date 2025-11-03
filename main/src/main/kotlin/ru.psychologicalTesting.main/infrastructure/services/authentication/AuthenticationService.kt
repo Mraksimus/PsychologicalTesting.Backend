@@ -7,6 +7,9 @@ import ru.psychologicalTesting.main.infrastructure.services.authentication.resul
 interface AuthenticationService {
 
     fun register(
+        name: String,
+        surname: String,
+        patronymic: String?,
         email: String,
         password: String
     ): RegistrationResult

@@ -6,6 +6,9 @@ import java.util.*
 interface UserService {
 
     fun create(
+        name: String,
+        surname: String,
+        patronymic: String?,
         email: String,
         password: String
     ): User

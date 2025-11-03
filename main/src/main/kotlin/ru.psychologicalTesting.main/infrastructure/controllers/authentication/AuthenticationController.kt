@@ -41,12 +41,18 @@ private fun Route.configurePublicRoutes() {
         handle {
 
             val (
+                name,
+                surname,
+                patronymic,
                 email,
                 password
             ) = call.receive<RegisterRequest>()
 
             val result = suspendedTransaction {
                 authenticationService.register(
+                    name = name,
+                    surname = surname,
+                    patronymic = patronymic,
                     email = email,
                     password = password
                 )

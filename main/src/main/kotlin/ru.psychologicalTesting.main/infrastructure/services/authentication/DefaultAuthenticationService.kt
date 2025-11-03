@@ -26,11 +26,17 @@ class DefaultAuthenticationService(
     private val tokenCharacters = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
     override fun register(
+        name: String,
+        surname: String,
+        patronymic: String?,
         email: String,
         password: String
     ): RegistrationResult {
 
         val user = userService.create(
+            name = name,
+            surname = surname,
+            patronymic = patronymic,
             email = email,
             password = password
         )

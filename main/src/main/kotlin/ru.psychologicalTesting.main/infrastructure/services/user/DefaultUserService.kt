@@ -12,11 +12,17 @@ class DefaultUserService(
 ) : UserService {
 
     override fun create(
+        name: String,
+        surname: String,
+        patronymic: String?,
         email: String,
         password: String
     ): User {
 
         val user = userRepository.create(
+            name = name,
+            surname = surname,
+            patronymic = patronymic,
             email = email,
             password = BCrypt.hashpw(password, BCrypt.gensalt())
         )
