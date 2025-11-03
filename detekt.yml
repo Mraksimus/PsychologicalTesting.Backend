@@ -28,7 +28,7 @@ naming:
     active: true
 
   InvalidPackageDeclaration:
-    active: true
+    active: false
 
   MatchingDeclarationName:
     active: false # Must be re-enabled upon release of Detekt 2.0 with K2 support

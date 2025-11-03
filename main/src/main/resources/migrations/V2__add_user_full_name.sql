@@ -1,0 +1,3 @@
+ALTER TABLE "user" ADD "name" TEXT DEFAULT '' NOT NULL;
+ALTER TABLE "user" ADD surname TEXT DEFAULT '' NOT NULL;
+ALTER TABLE "user" ADD patronymic TEXT NULL;

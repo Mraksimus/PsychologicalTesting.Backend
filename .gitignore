@@ -3,5 +3,5 @@
 .fleet
 .kotlin
 build
-run
+**/run/development
 .env
