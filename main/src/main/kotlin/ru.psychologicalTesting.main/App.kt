@@ -5,6 +5,7 @@ import io.ktor.server.netty.EngineMain
 import ru.psychologicalTesting.main.plugins.authentication.configureAuthentication
 import ru.psychologicalTesting.main.plugins.configureAkkurate
 import ru.psychologicalTesting.main.plugins.configureContentNegotiation
+import ru.psychologicalTesting.main.plugins.configureCors
 import ru.psychologicalTesting.main.plugins.configureDatabase
 import ru.psychologicalTesting.main.plugins.configureDocs
 import ru.psychologicalTesting.main.plugins.configureKoin
@@ -23,6 +24,8 @@ fun Application.module() {
 
     configureAuthentication()
     configureRouting()
+
     configureDocs()
+    configureCors()
 
 }
