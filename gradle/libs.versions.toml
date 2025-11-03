@@ -16,6 +16,7 @@ jbcrypt = "0.4"
 flyway = "11.9.0"
 hikaricp = "6.3.0"
 kotlinx-datetime = "0.6.2"
+koog = "0.5.2"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -65,6 +66,9 @@ flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", versio
 akkurate-core = { module = "dev.nesk.akkurate:akkurate-core", version.ref = "akkurate" }
 akkurate-ktor = { module = "dev.nesk.akkurate:akkurate-ktor-server", version.ref = "akkurate" }
 akkurate-compiler = { module = "dev.nesk.akkurate:akkurate-ksp-plugin", version.ref = "akkurate" }
+
+koog-agents = { module = "ai.koog:koog-agents", version.ref = "koog" }
+koog-ollama-client = { module = "ai.koog:prompt-executor-ollama-client", version.ref = "koog" }
 
 jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrypt" }
 
