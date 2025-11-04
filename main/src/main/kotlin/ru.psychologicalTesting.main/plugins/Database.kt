@@ -51,10 +51,7 @@ fun applyDatabaseMigrations(
  * FYI: used only to generate migration scripts to use with FlyWay
  * Should be replaced by a gradle plugin whenever it is available
  * https://youtrack.jetbrains.com/issue/EXPOSED-755/Create-a-migration-Gradle-plugin
- *
- * !!! DO NOT COMMIT ACTUAL DATABASE CREDENTIALS !!!
- * !!! DO NOT FORGET TO COMMENT IT OUT BEFORE COMMITTING !!!
- */
+*/
 
 @OptIn(ExperimentalDatabaseMigrationApi::class)
 fun main() {
