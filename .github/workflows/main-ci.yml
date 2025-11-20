@@ -31,7 +31,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build project
-        run: ./gradlew assemble --build-cache --no-daemon
+        run: ./gradlew main:assemble --build-cache --no-daemon
 
 #  detekt:
 #    name: Static analysis (Detekt)

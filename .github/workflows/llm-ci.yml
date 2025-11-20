@@ -31,7 +31,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build project
-        run: ./gradlew assemble --build-cache --no-daemon
+        run: ./gradlew llm:assemble --build-cache --no-daemon
 
   test:
     name: Unit tests
