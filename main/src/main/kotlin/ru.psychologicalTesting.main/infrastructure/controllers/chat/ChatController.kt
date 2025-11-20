@@ -41,7 +41,7 @@ private fun Route.configureAuthenticatedRoutes() {
 
         responses {
             HttpStatusCode.OK returns typeInfo<LLMChatResponse>()
-            HttpStatusCode.BadRequest returns nothing
+            HttpStatusCode.BadRequest returns typeInfo<String>()
         }
 
         handle {
@@ -57,7 +57,7 @@ private fun Route.configureAuthenticatedRoutes() {
 
             when (result) {
                 is PromptResult.Error ->
-                    call.respond(HttpStatusCode.BadRequest)
+                    call.respond(HttpStatusCode.BadRequest, result.message)
                 is PromptResult.Success ->
                     call.respond(HttpStatusCode.OK, result)
             }

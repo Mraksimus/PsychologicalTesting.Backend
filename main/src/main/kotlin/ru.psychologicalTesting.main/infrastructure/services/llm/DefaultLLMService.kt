@@ -55,12 +55,12 @@ class DefaultLLMService(
             }.body()
 
             PromptResult.Success(result)
-        } catch (_: Exception) {
-            PromptResult.Error
+        } catch (ex: Exception) {
+            PromptResult.Error(ex.message ?: "Unknown error")
         }
 
         if (response is PromptResult.Error) {
-            return PromptResult.Error
+            return PromptResult.Error(response.message)
         } else if (response is PromptResult.Success) {
             transaction {
 
