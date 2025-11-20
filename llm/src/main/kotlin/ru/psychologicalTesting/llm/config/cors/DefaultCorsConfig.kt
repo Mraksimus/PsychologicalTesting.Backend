@@ -1,4 +1,4 @@
-package ru.psychologicalTesting.llm.config.ollama
+package ru.psychologicalTesting.llm.config.cors
 
 import io.ktor.server.application.Application
 import io.ktor.server.config.getAs
@@ -6,6 +6,6 @@ import org.koin.core.annotation.Provided
 import org.koin.core.annotation.Single
 
 @Single
-class DefaultOllamaConfig(
+class DefaultCorsConfig(
     @Provided app: Application
-) : OllamaConfig by app.environment.config.property("ollama").getAs<SerialOllamaConfig>()
+) : CorsConfig by app.environment.config.property("cors").getAs<SerialCorsConfig>()

@@ -12,6 +12,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.main.config.database.DatabaseConfig
+import ru.psychologicalTesting.main.infrastructure.models.ChatHistoryModel
 import ru.psychologicalTesting.main.infrastructure.models.TokenModel
 import ru.psychologicalTesting.main.infrastructure.models.UserModel
 import javax.sql.DataSource
@@ -59,6 +60,7 @@ fun main() {
     val tables: Array<Table> = arrayOf(
         TokenModel,
         UserModel,
+        ChatHistoryModel
     )
 
     val host = System.getenv("DB_HOST") ?: "localhost"
@@ -78,7 +80,7 @@ fun main() {
             tables = tables,
             scriptDirectory = "main/src/main/resources/migrations",
             // Make sure to change script name before generating, otherwise rollback the overridden file :)
-            scriptName = "V2__add_user_full_name",
+            scriptName = "V3__add_chat_history",
         )
     }
 

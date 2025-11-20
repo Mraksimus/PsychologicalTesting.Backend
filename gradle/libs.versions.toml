@@ -1,8 +1,8 @@
 [versions]
-kotlin = "2.1.21"
-kotlinx-serialization = "1.7.1"
+kotlin = "2.2.21"
+kotlinx-serialization = "1.9.0"
 detekt = "1.23.6"
-ksp = "2.1.21-2.0.1"
+ksp = "2.2.21-2.0.4"
 ktor = "3.3.0"
 ktor-docs = "1.6.1-SNAPSHOT"
 koin = "4.1.0-RC1"
@@ -40,6 +40,7 @@ ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor"
 ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
 ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
 ktor-server-contentNegotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-server-openapi = { module = "io.ktor:ktor-server-openapi", version.ref = "ktor" }
 ktor-server-swagger = { module = "io.ktor:ktor-server-swagger", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
@@ -68,8 +69,9 @@ akkurate-core = { module = "dev.nesk.akkurate:akkurate-core", version.ref = "akk
 akkurate-ktor = { module = "dev.nesk.akkurate:akkurate-ktor-server", version.ref = "akkurate" }
 akkurate-compiler = { module = "dev.nesk.akkurate:akkurate-ksp-plugin", version.ref = "akkurate" }
 
+koog-ktor = { module = "ai.koog:koog-ktor", version.ref = "koog" }
 koog-agents = { module = "ai.koog:koog-agents", version.ref = "koog" }
-koog-ollama-client = { module = "ai.koog:prompt-executor-ollama-client", version.ref = "koog" }
+koog-promtExecutorOllamaClient = { module = "ai.koog:prompt-executor-ollama-client", version.ref = "koog" }
 
 jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrypt" }
 
