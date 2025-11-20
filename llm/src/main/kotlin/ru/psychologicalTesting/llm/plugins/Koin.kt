@@ -6,7 +6,6 @@ import org.koin.dsl.module
 import org.koin.ksp.generated.module
 import org.koin.ktor.plugin.Koin
 import ru.psychologicalTesting.llm.config.ConfigModule
-import ru.psychologicalTesting.llm.infrastructure.services.ServicesModule
 
 fun Application.configureKoin() {
     install(Koin) {
@@ -17,8 +16,7 @@ fun Application.configureKoin() {
 
         modules(
             applicationModule,
-            ConfigModule().module,
-            ServicesModule().module
+            ConfigModule().module
         )
 
     }

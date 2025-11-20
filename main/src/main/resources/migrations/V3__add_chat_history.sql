@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS chat_history (id uuid PRIMARY KEY, user_id uuid NOT NULL, message TEXT NOT NULL, "role" VARCHAR(10) NOT NULL, created_at TIMESTAMP NOT NULL, CONSTRAINT fk_chat_history_user_id__id FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE RESTRICT);

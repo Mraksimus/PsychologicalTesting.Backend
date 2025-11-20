@@ -18,9 +18,7 @@ import ru.psychologicalTesting.main.infrastructure.services.authentication.resul
 import ru.psychologicalTesting.main.plugins.suspendedTransaction
 
 fun Routing.configureAuthenticationRouting() = route("/auth") {
-
     configurePublicRoutes()
-
 }
 
 private fun Route.configurePublicRoutes() {

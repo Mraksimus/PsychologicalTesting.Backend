@@ -105,7 +105,7 @@ ktor {
             username = providers.environmentVariable("GITHUB_ACTOR"),
             password = providers.environmentVariable("GITHUB_TOKEN"),
             hostname = provider { "ghcr.io" },
-            project = provider { "mraksimus/psychologicaltesting.backend" }
+            project = provider { "mraksimus/psychologicaltesting.backend/main" }
         )
 
     }
