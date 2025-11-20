@@ -1,3 +1,6 @@
+@file:OptIn(OpenApiPreview::class)
+
+import io.ktor.plugin.OpenApiPreview
 import io.ktor.plugin.features.DockerImageRegistry
 
 plugins {
@@ -32,6 +35,8 @@ dependencies {
 
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.auth)
+    implementation(libs.ktor.server.cors)
+//    implementation(libs.ktor.server.openapi)
     implementation(libs.ktor.server.swagger)
     implementation(libs.ktor.server.contentNegotiation)
 
@@ -48,8 +53,9 @@ dependencies {
     implementation(libs.koin.annotations)
     ksp(libs.koin.compiler)
 
+    implementation(libs.koog.ktor)
     implementation(libs.koog.agents)
-    implementation(libs.koog.ollama.client)
+    implementation(libs.koog.promtExecutorOllamaClient)
 
     testImplementation(kotlin("test"))
 
@@ -70,6 +76,7 @@ application {
 }
 
 ktor {
+
     docker {
 
         localImageName = "psychological-testing-llm"
@@ -82,10 +89,18 @@ ktor {
             username = providers.environmentVariable("GITHUB_ACTOR"),
             password = providers.environmentVariable("GITHUB_TOKEN"),
             hostname = provider { "ghcr.io" },
-            project = provider { "mraksimus/psychologicaltesting.backend" }
+            project = provider { "mraksimus/psychologicaltesting.backend/llm" }
         )
 
     }
+
+    openApi {
+        target = project.layout.projectDirectory.file("run/development/api.json")
+        title = "Psychological testing LLM"
+        description = "REST API для обработки текста через LLM"
+        version = "1.0.0"
+    }
+
 }
 
 jib {
