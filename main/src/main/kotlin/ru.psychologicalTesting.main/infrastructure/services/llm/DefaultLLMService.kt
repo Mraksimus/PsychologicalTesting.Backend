@@ -14,13 +14,15 @@ import org.koin.core.annotation.Single
 import ru.psychologicalTesting.common.messages.LLMMessage
 import ru.psychologicalTesting.common.types.LLMChatRequest
 import ru.psychologicalTesting.common.types.LLMChatResponse
+import ru.psychologicalTesting.main.config.llm.LLMConfig
 import ru.psychologicalTesting.main.infrastructure.repositories.chat.ChatHistoryRepository
 import ru.psychologicalTesting.main.infrastructure.services.llm.results.PromptResult
 import java.util.*
 
 @Single
 class DefaultLLMService(
-    private val chatRepository: ChatHistoryRepository
+    private val chatRepository: ChatHistoryRepository,
+    llmConfig: LLMConfig,
 ) : LLMService {
 
     private val client = HttpClient {
@@ -32,6 +34,8 @@ class DefaultLLMService(
             )
         }
     }
+
+    val llmServiceUrl = "http://${llmConfig.host}:${llmConfig.port}"
 
     override suspend fun sendPrompt(
         userId: UUID,
@@ -49,7 +53,7 @@ class DefaultLLMService(
 
         val response = try {
 
-            val result: LLMChatResponse = client.post("http://localhost:1489/ollama/chat") {
+            val result: LLMChatResponse = client.post("$llmServiceUrl/ollama/chat") {
                 contentType(ContentType.Application.Json)
                 setBody(responseBody)
             }.body()
