@@ -1,6 +1,6 @@
 package ru.psychologicalTesting.main.infrastructure.services.testing
 
-import ru.psychologicalTesting.main.infrastructure.dto.testing.question.ExistingQuestion
+import ru.psychologicalTesting.common.testing.question.ExistingQuestion
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CloseSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CompleteSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CreateSessionResult
@@ -19,7 +19,7 @@ interface TestingService {
         questionResponses: List<ExistingQuestion>
     ): UpdateAnswersResult
 
-    fun completeSession(
+    suspend fun completeSession(
         sessionId: UUID
     ): CompleteSessionResult
 

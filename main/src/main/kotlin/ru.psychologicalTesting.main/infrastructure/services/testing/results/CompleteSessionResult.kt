@@ -1,7 +1,7 @@
 package ru.psychologicalTesting.main.infrastructure.services.testing.results
 
 import kotlinx.serialization.Serializable
-import ru.psychologicalTesting.main.infrastructure.dto.testing.session.ExistingTestingSession
+import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
 
 sealed class CompleteSessionResult {
 
@@ -9,9 +9,15 @@ sealed class CompleteSessionResult {
 
     data object SessionNotFound : Error()
 
+    data object TestNotFound : Error()
+
     data object SessionMustBeOpened : Error()
 
     data object TestIsNotCompleted : Error()
+
+    data object LLMRequestError : Error()
+
+    data object SessionUpdateError : Error()
 
     @Serializable
     data class Success(

@@ -1,11 +1,11 @@
-package ru.psychologicalTesting.main.infrastructure.dto.testing.question
+package ru.psychologicalTesting.common.testing.question
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.psychologicalTesting.main.infrastructure.dto.testing.question.answer.Answer
-import ru.psychologicalTesting.main.infrastructure.dto.testing.question.answer.ClientAnswer
-import ru.psychologicalTesting.main.infrastructure.dto.testing.question.answer.FullAnswer
-import ru.psychologicalTesting.main.infrastructure.dto.testing.question.answer.toClientAnswer
+import ru.psychologicalTesting.common.testing.question.answer.Answer
+import ru.psychologicalTesting.common.testing.question.answer.ClientAnswer
+import ru.psychologicalTesting.common.testing.question.answer.FullAnswer
+import ru.psychologicalTesting.common.testing.question.answer.toClientAnswer
 
 @Serializable
 sealed class QuestionContentType {

@@ -14,7 +14,7 @@ import io.ktor.util.reflect.typeInfo
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.common.messages.LLMMessage
-import ru.psychologicalTesting.common.types.LLMChatResponse
+import ru.psychologicalTesting.common.types.LLMResponse
 import ru.psychologicalTesting.main.infrastructure.controllers.chat.requests.ChatRequest
 import ru.psychologicalTesting.main.infrastructure.controllers.common.responses.BadRequestResponse
 import ru.psychologicalTesting.main.infrastructure.repositories.chat.ChatHistoryRepository
@@ -43,7 +43,7 @@ private fun Route.configureAuthenticatedRoutes() {
         requestBody = typeInfo<ChatRequest>()
 
         responses {
-            HttpStatusCode.OK returns typeInfo<LLMChatResponse>()
+            HttpStatusCode.OK returns typeInfo<LLMResponse>()
             HttpStatusCode.BadRequest returns typeInfo<BadRequestResponse>()
         }
 

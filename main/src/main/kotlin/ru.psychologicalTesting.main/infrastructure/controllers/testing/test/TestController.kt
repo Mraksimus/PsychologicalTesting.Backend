@@ -11,7 +11,7 @@ import io.ktor.util.reflect.typeInfo
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.main.infrastructure.controllers.common.parameters.PageParameters
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
-import ru.psychologicalTesting.main.infrastructure.dto.testing.test.ExistingTest
+import ru.psychologicalTesting.common.testing.test.ExistingTest
 import ru.psychologicalTesting.main.infrastructure.repositories.testing.test.TestRepository
 import ru.psychologicalTesting.main.plugins.suspendedTransaction
 

@@ -1,7 +1,7 @@
 package ru.psychologicalTesting.main.infrastructure.repositories.testing.question
 
-import ru.psychologicalTesting.main.infrastructure.dto.testing.question.ExistingQuestion
-import ru.psychologicalTesting.main.infrastructure.dto.testing.question.NewQuestion
+import ru.psychologicalTesting.common.testing.question.ExistingQuestion
+import ru.psychologicalTesting.common.testing.question.NewQuestion
 import java.util.*
 
 interface QuestionRepository {

@@ -12,6 +12,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.route
 import io.ktor.util.reflect.typeInfo
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.main.infrastructure.controllers.common.parameters.PageParameters
 import ru.psychologicalTesting.main.infrastructure.controllers.common.responses.BadRequestResponse
@@ -26,7 +27,7 @@ import ru.psychologicalTesting.main.infrastructure.controllers.testing.session.r
 import ru.psychologicalTesting.main.infrastructure.controllers.testing.session.types.parameters.CreateSessionParameters
 import ru.psychologicalTesting.main.infrastructure.controllers.testing.session.types.parameters.TestingSessionScopeParameters
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
-import ru.psychologicalTesting.main.infrastructure.dto.testing.session.ExistingTestingSession
+import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
 import ru.psychologicalTesting.main.infrastructure.repositories.testing.session.TestingSessionRepository
 import ru.psychologicalTesting.main.infrastructure.services.testing.TestingService
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CloseSessionResult
@@ -196,13 +197,25 @@ private fun Route.configureAuthenticatedRoutes() {
 
                 handle {
 
-                    val result = suspendedTransaction {
+                    val result = newSuspendedTransaction {
                         testingService.completeSession(parameters.sessionId)
                     }
 
                     when (result) {
                         is CompleteSessionResult.SessionNotFound ->
                             call.respondNotFound("Session(id=${parameters.sessionId}) does not exist")
+                        is CompleteSessionResult.TestNotFound ->
+                            call.respondNotFound("Test not found")
+                        is CompleteSessionResult.LLMRequestError ->
+                            call.respond(
+                                HttpStatusCode.InternalServerError,
+                                "LLM request failed"
+                            )
+                        is CompleteSessionResult.SessionUpdateError ->
+                            call.respond(
+                                HttpStatusCode.InternalServerError,
+                                "Session(id=${parameters.sessionId}) update failed"
+                            )
                         is CompleteSessionResult.SessionMustBeOpened ->
                             call.respondBadRequest("Session(id=${parameters.sessionId}) must be opened")
                         is CompleteSessionResult.TestIsNotCompleted ->

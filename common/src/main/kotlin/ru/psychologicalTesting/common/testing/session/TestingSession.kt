@@ -1,9 +1,9 @@
-package ru.psychologicalTesting.main.infrastructure.dto.testing.session
+package ru.psychologicalTesting.common.testing.session
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
-import ru.psychologicalTesting.main.compat.SerialUUID
-import ru.psychologicalTesting.main.infrastructure.dto.testing.question.ExistingQuestion
+import ru.psychologicalTesting.common.compat.SerialUUID
+import ru.psychologicalTesting.common.testing.question.ExistingQuestion
 
 @Serializable
 data class NewTestingSession(

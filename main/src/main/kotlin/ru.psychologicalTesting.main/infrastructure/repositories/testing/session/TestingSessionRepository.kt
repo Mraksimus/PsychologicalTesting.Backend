@@ -1,8 +1,8 @@
 package ru.psychologicalTesting.main.infrastructure.repositories.testing.session
 
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
-import ru.psychologicalTesting.main.infrastructure.dto.testing.session.ExistingTestingSession
-import ru.psychologicalTesting.main.infrastructure.dto.testing.session.NewTestingSession
+import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
+import ru.psychologicalTesting.common.testing.session.NewTestingSession
 import java.util.*
 
 interface TestingSessionRepository {

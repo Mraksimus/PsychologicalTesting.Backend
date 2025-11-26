@@ -4,8 +4,8 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.json.jsonb
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
-import ru.psychologicalTesting.main.infrastructure.dto.testing.question.ExistingQuestion
-import ru.psychologicalTesting.main.infrastructure.dto.testing.session.TestingSession
+import ru.psychologicalTesting.common.testing.question.ExistingQuestion
+import ru.psychologicalTesting.common.testing.session.TestingSession
 import ru.psychologicalTesting.main.infrastructure.models.UserModel
 import ru.psychologicalTesting.main.infrastructure.models.json
 

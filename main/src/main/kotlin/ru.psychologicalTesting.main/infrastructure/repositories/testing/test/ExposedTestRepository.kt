@@ -14,8 +14,8 @@ import org.koin.core.annotation.Single
 import ru.psychologicalTesting.main.extensions.deleteById
 import ru.psychologicalTesting.main.extensions.updateById
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
-import ru.psychologicalTesting.main.infrastructure.dto.testing.test.ExistingTest
-import ru.psychologicalTesting.main.infrastructure.dto.testing.test.NewTest
+import ru.psychologicalTesting.common.testing.test.ExistingTest
+import ru.psychologicalTesting.common.testing.test.NewTest
 import ru.psychologicalTesting.main.infrastructure.models.testing.TestModel
 import ru.psychologicalTesting.main.utils.now
 import java.util.*

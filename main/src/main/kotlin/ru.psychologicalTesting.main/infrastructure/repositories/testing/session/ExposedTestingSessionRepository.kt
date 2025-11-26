@@ -9,9 +9,9 @@ import org.koin.core.annotation.Single
 import ru.psychologicalTesting.main.extensions.deleteById
 import ru.psychologicalTesting.main.extensions.updateById
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
-import ru.psychologicalTesting.main.infrastructure.dto.testing.session.ExistingTestingSession
-import ru.psychologicalTesting.main.infrastructure.dto.testing.session.NewTestingSession
-import ru.psychologicalTesting.main.infrastructure.dto.testing.session.TestingSession
+import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
+import ru.psychologicalTesting.common.testing.session.NewTestingSession
+import ru.psychologicalTesting.common.testing.session.TestingSession
 import ru.psychologicalTesting.main.infrastructure.models.testing.TestingSessionModel
 import ru.psychologicalTesting.main.utils.now
 import java.util.*

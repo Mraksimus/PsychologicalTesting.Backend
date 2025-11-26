@@ -1,4 +1,4 @@
-package ru.psychologicalTesting.main.infrastructure.dto.testing.question.answer
+package ru.psychologicalTesting.common.testing.question.answer
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

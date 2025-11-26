@@ -1,4 +1,4 @@
-package ru.psychologicalTesting.common.types
+package ru.psychologicalTesting.common.types.chat
 
 import kotlinx.serialization.Serializable
 import ru.psychologicalTesting.common.messages.LLMMessage

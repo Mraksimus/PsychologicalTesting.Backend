@@ -12,15 +12,17 @@ import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
 import ru.psychologicalTesting.main.extensions.deleteById
 import ru.psychologicalTesting.main.extensions.updateById
-import ru.psychologicalTesting.main.infrastructure.dto.testing.question.ExistingQuestion
-import ru.psychologicalTesting.main.infrastructure.dto.testing.question.NewQuestion
+import ru.psychologicalTesting.common.testing.question.ExistingQuestion
+import ru.psychologicalTesting.common.testing.question.NewQuestion
 import ru.psychologicalTesting.main.infrastructure.models.testing.QuestionModel
 import java.util.*
 
 @Single
 class ExposedQuestionRepository : QuestionRepository {
 
-    override fun create(dto: NewQuestion): ExistingQuestion {
+    override fun create(
+        dto: NewQuestion
+    ): ExistingQuestion {
 
         val positionExpression = QuestionModel.position.max()
 
