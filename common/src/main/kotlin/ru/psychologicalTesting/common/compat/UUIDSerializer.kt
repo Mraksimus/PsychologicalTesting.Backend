@@ -1,4 +1,4 @@
-package ru.psychologicalTesting.main.compat
+package ru.psychologicalTesting.common.compat
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

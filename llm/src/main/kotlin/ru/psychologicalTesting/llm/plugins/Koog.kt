@@ -22,7 +22,7 @@ fun Application.configureKoog() = install(Koog) {
             provider = LLMProvider.Ollama
             model = LLModel(
                 provider = LLMProvider.Ollama,
-                id = ollamaConfig.model,
+                id = ollamaConfig.chatModel,
                 capabilities = listOf(),
                 contextLength = 32_000
             )
@@ -33,7 +33,7 @@ fun Application.configureKoog() = install(Koog) {
     agentConfig {
 
         prompt(name = "psychologist") {
-            system(ollamaConfig.systemPrompt.trimIndent())
+            system(ollamaConfig.chatSystemPrompt.trimIndent())
         }
 
         maxAgentIterations = 10

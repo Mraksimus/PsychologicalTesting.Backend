@@ -1,7 +1,7 @@
 package ru.psychologicalTesting.main.infrastructure.repositories.authentication
 
 import ru.psychologicalTesting.main.infrastructure.dto.Token
-import java.util.UUID
+import java.util.*
 
 interface TokenRepository {
 

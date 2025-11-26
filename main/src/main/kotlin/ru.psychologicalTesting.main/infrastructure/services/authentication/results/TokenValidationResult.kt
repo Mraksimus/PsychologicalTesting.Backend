@@ -1,6 +1,6 @@
 package ru.psychologicalTesting.main.infrastructure.services.authentication.results
 
-import ru.psychologicalTesting.main.compat.SerialUUID
+import ru.psychologicalTesting.common.compat.SerialUUID
 
 sealed class TokenValidationResult {
 

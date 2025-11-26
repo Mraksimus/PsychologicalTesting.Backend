@@ -1,7 +1,7 @@
 package ru.psychologicalTesting.main.infrastructure.services.llm.results
 
 import kotlinx.serialization.Serializable
-import ru.psychologicalTesting.common.types.LLMChatResponse
+import ru.psychologicalTesting.common.types.LLMResponse
 
 sealed class PromptResult {
 
@@ -9,7 +9,7 @@ sealed class PromptResult {
 
     @Serializable
     data class Success(
-        val llmChatResponse: LLMChatResponse
+        val llmResponse: LLMResponse
     ) : PromptResult()
 
 }

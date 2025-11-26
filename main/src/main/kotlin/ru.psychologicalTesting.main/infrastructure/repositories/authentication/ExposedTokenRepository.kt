@@ -13,7 +13,7 @@ import ru.psychologicalTesting.main.extensions.updateById
 import ru.psychologicalTesting.main.infrastructure.dto.Token
 import ru.psychologicalTesting.main.infrastructure.models.TokenModel
 import ru.psychologicalTesting.main.utils.now
-import java.util.UUID
+import java.util.*
 
 @Single
 class ExposedTokenRepository : TokenRepository {

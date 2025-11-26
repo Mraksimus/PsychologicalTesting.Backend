@@ -8,9 +8,9 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.koin.core.annotation.Single
 import ru.psychologicalTesting.common.messages.LLMMessage
-import ru.psychologicalTesting.main.infrastructure.models.ChatHistoryModel
+import ru.psychologicalTesting.main.infrastructure.models.MessageModule
 import ru.psychologicalTesting.main.utils.now
-import java.util.UUID
+import java.util.*
 
 @Single
 class ExposedChatHistoryRepository : ChatHistoryRepository {
@@ -21,7 +21,7 @@ class ExposedChatHistoryRepository : ChatHistoryRepository {
         role: LLMMessage.Role
     ): LLMMessage {
 
-        val insertedRow = ChatHistoryModel.insert {
+        val insertedRow = MessageModule.insert {
             it[this.userId] = userId
             it[this.message] = message
             it[this.role] = role
@@ -29,22 +29,22 @@ class ExposedChatHistoryRepository : ChatHistoryRepository {
         }
 
         return LLMMessage(
-            content = insertedRow[ChatHistoryModel.message],
-            role = insertedRow[ChatHistoryModel.role]
+            content = insertedRow[MessageModule.message],
+            role = insertedRow[MessageModule.role]
         )
     }
 
     override fun findAllByUserId(
         userId: UUID
     ): List<LLMMessage> {
-        return ChatHistoryModel
+        return MessageModule
             .selectAll()
-            .where(ChatHistoryModel.userId eq userId)
-            .orderBy(ChatHistoryModel.createdAt, SortOrder.ASC)
+            .where(MessageModule.userId eq userId)
+            .orderBy(MessageModule.createdAt, SortOrder.ASC)
             .map {
                 LLMMessage(
-                    content = it[ChatHistoryModel.message],
-                    role = it[ChatHistoryModel.role]
+                    content = it[MessageModule.message],
+                    role = it[MessageModule.role]
                 )
             }
     }
@@ -52,8 +52,8 @@ class ExposedChatHistoryRepository : ChatHistoryRepository {
     override fun clear(
         userId: UUID
     ): Boolean {
-        return ChatHistoryModel.deleteWhere {
-            ChatHistoryModel.userId eq userId
+        return MessageModule.deleteWhere {
+            MessageModule.userId eq userId
         } > 0
     }
 

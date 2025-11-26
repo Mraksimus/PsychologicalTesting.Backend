@@ -12,9 +12,12 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.main.config.database.DatabaseConfig
-import ru.psychologicalTesting.main.infrastructure.models.ChatHistoryModel
+import ru.psychologicalTesting.main.infrastructure.models.MessageModule
 import ru.psychologicalTesting.main.infrastructure.models.TokenModel
 import ru.psychologicalTesting.main.infrastructure.models.UserModel
+import ru.psychologicalTesting.main.infrastructure.models.testing.QuestionModel
+import ru.psychologicalTesting.main.infrastructure.models.testing.TestModel
+import ru.psychologicalTesting.main.infrastructure.models.testing.TestingSessionModel
 import javax.sql.DataSource
 
 fun Application.configureDatabase() {
@@ -60,7 +63,10 @@ fun main() {
     val tables: Array<Table> = arrayOf(
         TokenModel,
         UserModel,
-        ChatHistoryModel
+        MessageModule,
+        TestModel,
+        QuestionModel,
+        TestingSessionModel
     )
 
     val host = System.getenv("DB_HOST") ?: "localhost"
@@ -80,7 +86,7 @@ fun main() {
             tables = tables,
             scriptDirectory = "main/src/main/resources/migrations",
             // Make sure to change script name before generating, otherwise rollback the overridden file :)
-            scriptName = "V3__add_chat_history",
+            scriptName = "V4__create_testing_service_tables",
         )
     }
 
