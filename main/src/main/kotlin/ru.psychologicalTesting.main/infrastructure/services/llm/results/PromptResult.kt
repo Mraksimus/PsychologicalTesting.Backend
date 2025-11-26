@@ -5,7 +5,10 @@ import ru.psychologicalTesting.common.types.LLMResponse
 
 sealed class PromptResult {
 
-    data object Error : PromptResult()
+    @Serializable
+    data class Error(
+        val message: String
+    ) : PromptResult()
 
     @Serializable
     data class Success(

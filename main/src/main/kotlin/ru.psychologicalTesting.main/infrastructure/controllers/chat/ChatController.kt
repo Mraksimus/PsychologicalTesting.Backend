@@ -17,6 +17,7 @@ import ru.psychologicalTesting.common.messages.LLMMessage
 import ru.psychologicalTesting.common.types.LLMResponse
 import ru.psychologicalTesting.main.infrastructure.controllers.chat.requests.ChatRequest
 import ru.psychologicalTesting.main.infrastructure.controllers.common.responses.BadRequestResponse
+import ru.psychologicalTesting.main.infrastructure.controllers.common.responses.BadRequestResponse
 import ru.psychologicalTesting.main.infrastructure.repositories.chat.ChatHistoryRepository
 import ru.psychologicalTesting.main.infrastructure.services.llm.LLMService
 import ru.psychologicalTesting.main.infrastructure.services.llm.results.PromptResult

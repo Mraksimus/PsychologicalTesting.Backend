@@ -25,7 +25,8 @@ import java.util.*
 
 @Single
 class DefaultLLMService(
-    private val chatRepository: ChatHistoryRepository
+    private val chatRepository: ChatHistoryRepository,
+    llmConfig: LLMConfig,
 ) : LLMService {
 
     private val client = HttpClient {
@@ -37,6 +38,8 @@ class DefaultLLMService(
             )
         }
     }
+
+    val llmServiceUrl = "http://${llmConfig.host}:${llmConfig.port}"
 
     override suspend fun sendPrompt(
         userId: UUID,
@@ -54,18 +57,18 @@ class DefaultLLMService(
 
         val response = try {
 
-            val result: LLMResponse = client.post("http://localhost:1489/ollama/chat") {
+            val result: LLMResponse = client.post("$llmServiceUrl/ollama/chat") {
                 contentType(ContentType.Application.Json)
                 setBody(responseBody)
             }.body()
 
             PromptResult.Success(result)
-        } catch (_: Exception) {
-            PromptResult.Error
+        } catch (ex: Exception) {
+            PromptResult.Error(ex.message ?: "Unknown error")
         }
 
         if (response is PromptResult.Error) {
-            return PromptResult.Error
+            return PromptResult.Error(response.message)
         } else if (response is PromptResult.Success) {
             suspendedTransaction {
 
