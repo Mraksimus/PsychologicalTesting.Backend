@@ -19,7 +19,8 @@ interface TestingSessionRepository {
         id: UUID
     ): ExistingTestingSession?
 
-    fun findOneByTestId(
+    fun findOneByUserIdWithTestId(
+        userId: UUID,
         testId: UUID
     ): ExistingTestingSession?
 

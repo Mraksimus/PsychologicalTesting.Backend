@@ -32,7 +32,11 @@ class DefaultTestingService(
         testId: UUID
     ): CreateSessionResult {
 
-        val session = sessionRepository.findOneByTestId(testId)
+        val session = sessionRepository.findOneByUserIdWithTestId(
+            userId = userId,
+            testId = testId
+        )
+
         if (session != null && session.status == TestingSession.Status.IN_PROGRESS) {
             return CreateSessionResult.TestAlreadyStarted
         }

@@ -3,6 +3,7 @@ package ru.psychologicalTesting.main.infrastructure.repositories.testing.session
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.koin.core.annotation.Single
@@ -63,12 +64,16 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
             ?.toExistingTestingSession()
     }
 
-    override fun findOneByTestId(
+    override fun findOneByUserIdWithTestId(
+        userId: UUID,
         testId: UUID
     ): ExistingTestingSession? {
         return TestingSessionModel
             .selectAll()
-            .where(TestingSessionModel.testId eq testId)
+            .where {
+                (TestingSessionModel.userId eq userId)
+                    .and(TestingSessionModel.testId eq testId)
+            }
             .firstOrNull()
             ?.toExistingTestingSession()
     }
