@@ -60,9 +60,9 @@ private fun Route.configureAuthenticatedRoutes() {
 
             when (result) {
                 is PromptResult.Error ->
-                    call.respond(HttpStatusCode.BadRequest)
+                    call.respond(HttpStatusCode.BadRequest, result.message)
                 is PromptResult.Success ->
-                    call.respond(HttpStatusCode.OK, result)
+                    call.respond(HttpStatusCode.OK, result.llmResponse)
             }
         }
 
