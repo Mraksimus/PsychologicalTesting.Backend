@@ -2,7 +2,7 @@ package ru.psychologicalTesting.main.infrastructure.dto
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
-import ru.psychologicalTesting.main.compat.SerialUUID
+import ru.psychologicalTesting.common.compat.SerialUUID
 
 @Serializable
 data class Token(

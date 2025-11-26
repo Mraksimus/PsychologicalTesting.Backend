@@ -12,11 +12,16 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
 import ru.psychologicalTesting.common.messages.LLMMessage
-import ru.psychologicalTesting.common.types.LLMChatRequest
-import ru.psychologicalTesting.common.types.LLMChatResponse
+import ru.psychologicalTesting.common.testing.question.ExistingQuestion
+import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
+import ru.psychologicalTesting.common.testing.test.ExistingTest
+import ru.psychologicalTesting.common.types.chat.LLMChatRequest
+import ru.psychologicalTesting.common.types.LLMResponse
+import ru.psychologicalTesting.common.types.testTranscription.LLMTestTranscriptionRequest
 import ru.psychologicalTesting.main.config.llm.LLMConfig
 import ru.psychologicalTesting.main.infrastructure.repositories.chat.ChatHistoryRepository
 import ru.psychologicalTesting.main.infrastructure.services.llm.results.PromptResult
+import ru.psychologicalTesting.main.plugins.suspendedTransaction
 import java.util.*
 
 @Single
@@ -53,20 +58,20 @@ class DefaultLLMService(
 
         val response = try {
 
-            val result: LLMChatResponse = client.post("$llmServiceUrl/ollama/chat") {
+            val result: LLMResponse = client.post("$llmServiceUrl/ollama/chat") {
                 contentType(ContentType.Application.Json)
                 setBody(responseBody)
             }.body()
 
             PromptResult.Success(result)
-        } catch (ex: Exception) {
-            PromptResult.Error(ex.message ?: "Unknown error")
+        } catch (_: Exception) {
+            PromptResult.Error
         }
 
         if (response is PromptResult.Error) {
-            return PromptResult.Error(response.message)
+            return PromptResult.Error
         } else if (response is PromptResult.Success) {
-            transaction {
+            suspendedTransaction {
 
                 chatRepository.create(
                     userId = userId,
@@ -76,11 +81,42 @@ class DefaultLLMService(
 
                 chatRepository.create(
                     userId = userId,
-                    message = response.llmChatResponse.message,
+                    message = response.llmResponse.message,
                     role = LLMMessage.Role.ASSISTANT
                 )
 
             }
+        }
+
+        return response
+    }
+
+    override suspend fun sendTestResult(
+        test: ExistingTest,
+        questions: List<ExistingQuestion>,
+        session: ExistingTestingSession
+    ): PromptResult {
+
+        val responseBody = LLMTestTranscriptionRequest(
+            test = test,
+            questions = questions,
+            session = session
+        )
+
+        val response = try {
+
+            val result: LLMResponse = client.post("$llmServiceUrl/ollama/test") {
+                contentType(ContentType.Application.Json)
+                setBody(responseBody)
+            }.body()
+
+            PromptResult.Success(result)
+        } catch (_: Exception) {
+            PromptResult.Error
+        }
+
+        if (response is PromptResult.Error) {
+            return PromptResult.Error
         }
 
         return response

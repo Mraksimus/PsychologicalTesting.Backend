@@ -14,12 +14,15 @@ import io.ktor.util.reflect.typeInfo
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.common.messages.LLMMessage
-import ru.psychologicalTesting.common.types.LLMChatResponse
+import ru.psychologicalTesting.common.types.LLMResponse
 import ru.psychologicalTesting.main.infrastructure.controllers.chat.requests.ChatRequest
+import ru.psychologicalTesting.main.infrastructure.controllers.common.responses.BadRequestResponse
 import ru.psychologicalTesting.main.infrastructure.repositories.chat.ChatHistoryRepository
 import ru.psychologicalTesting.main.infrastructure.services.llm.LLMService
 import ru.psychologicalTesting.main.infrastructure.services.llm.results.PromptResult
 import ru.psychologicalTesting.main.plugins.authentication.UserPrincipal
+
+private const val SWAGGER_TAG = "Chat with LLM"
 
 fun Routing.configureChatRouting() = route("/chat") {
     authenticate("user") {
@@ -35,13 +38,13 @@ private fun Route.configureAuthenticatedRoutes() {
     post {
 
         description = "Send a message to the chat"
-        tags = listOf("Chat with LLM")
+        tags = listOf(SWAGGER_TAG)
 
         requestBody = typeInfo<ChatRequest>()
 
         responses {
-            HttpStatusCode.OK returns typeInfo<LLMChatResponse>()
-            HttpStatusCode.BadRequest returns typeInfo<String>()
+            HttpStatusCode.OK returns typeInfo<LLMResponse>()
+            HttpStatusCode.BadRequest returns typeInfo<BadRequestResponse>()
         }
 
         handle {
@@ -57,7 +60,7 @@ private fun Route.configureAuthenticatedRoutes() {
 
             when (result) {
                 is PromptResult.Error ->
-                    call.respond(HttpStatusCode.BadRequest, result.message)
+                    call.respond(HttpStatusCode.BadRequest)
                 is PromptResult.Success ->
                     call.respond(HttpStatusCode.OK, result)
             }
@@ -68,7 +71,7 @@ private fun Route.configureAuthenticatedRoutes() {
     get {
 
         description = "Get all messages"
-        tags = listOf("Chat with LLM")
+        tags = listOf(SWAGGER_TAG)
 
         responses {
             HttpStatusCode.OK returns typeInfo<List<LLMMessage>>()

@@ -1,7 +1,7 @@
 package ru.psychologicalTesting.main.infrastructure.repositories.chat
 
 import ru.psychologicalTesting.common.messages.LLMMessage
-import java.util.UUID
+import java.util.*
 
 interface ChatHistoryRepository {
 
