@@ -1,6 +1,6 @@
 package ru.psychologicalTesting.main.infrastructure.dto
 
-import java.util.UUID
+import java.util.*
 
 data class User(
     val id: UUID,

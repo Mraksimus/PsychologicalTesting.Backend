@@ -3,7 +3,7 @@ package ru.psychologicalTesting.main.infrastructure.models
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
-import java.util.UUID
+import java.util.*
 
 object TokenModel : IdTable<UUID>("token") {
 
