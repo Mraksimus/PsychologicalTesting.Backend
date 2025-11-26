@@ -18,6 +18,7 @@ import ru.psychologicalTesting.common.testing.test.ExistingTest
 import ru.psychologicalTesting.common.types.chat.LLMChatRequest
 import ru.psychologicalTesting.common.types.LLMResponse
 import ru.psychologicalTesting.common.types.testTranscription.LLMTestTranscriptionRequest
+import ru.psychologicalTesting.main.config.llm.LLMConfig
 import ru.psychologicalTesting.main.infrastructure.repositories.chat.ChatHistoryRepository
 import ru.psychologicalTesting.main.infrastructure.services.llm.results.PromptResult
 import ru.psychologicalTesting.main.plugins.suspendedTransaction
@@ -63,12 +64,12 @@ class DefaultLLMService(
             }.body()
 
             PromptResult.Success(result)
-        } catch (ex: Exception) {
-            PromptResult.Error(ex.message ?: "Unknown error")
+        } catch (_: Exception) {
+            PromptResult.Error
         }
 
         if (response is PromptResult.Error) {
-            return PromptResult.Error(response.message)
+            return PromptResult.Error
         } else if (response is PromptResult.Success) {
             suspendedTransaction {
 
@@ -104,7 +105,7 @@ class DefaultLLMService(
 
         val response = try {
 
-            val result: LLMResponse = client.post("http://localhost:1489/ollama/test") {
+            val result: LLMResponse = client.post("$llmServiceUrl/ollama/test") {
                 contentType(ContentType.Application.Json)
                 setBody(responseBody)
             }.body()
