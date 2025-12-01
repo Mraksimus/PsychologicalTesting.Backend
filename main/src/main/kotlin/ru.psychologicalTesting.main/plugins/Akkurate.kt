@@ -8,6 +8,7 @@ import io.ktor.server.plugins.requestvalidation.RequestValidation
 import org.koin.ktor.ext.getKoin
 import ru.psychologicalTesting.main.infrastructure.controllers.authentication.requests.LoginRequest
 import ru.psychologicalTesting.main.infrastructure.controllers.authentication.requests.RegisterRequest
+import ru.psychologicalTesting.main.infrastructure.controllers.profile.requests.ChangeUserFullNameRequest
 import ru.psychologicalTesting.main.infrastructure.repositories.user.UserRepository
 
 fun Application.configureAkkurate() {
@@ -19,6 +20,7 @@ fun Application.configureAkkurate() {
     install(RequestValidation) {
         registerValidator(LoginRequest.validator)
         registerValidator(RegisterRequest.validator(koin.get<UserRepository>()))
+        registerValidator(ChangeUserFullNameRequest.validator)
     }
 
 }

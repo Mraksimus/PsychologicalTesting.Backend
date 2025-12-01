@@ -86,7 +86,7 @@ fun main() {
             tables = tables,
             scriptDirectory = "main/src/main/resources/migrations",
             // Make sure to change script name before generating, otherwise rollback the overridden file :)
-            scriptName = "V4__create_testing_service_tables",
+            scriptName = "V5__update_user_table",
         )
     }
 

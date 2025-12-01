@@ -1,5 +1,6 @@
 package ru.psychologicalTesting.main.infrastructure.repositories.user
 
+import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
@@ -7,8 +8,9 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
 import ru.psychologicalTesting.main.extensions.deleteById
-import ru.psychologicalTesting.main.infrastructure.dto.User
+import ru.psychologicalTesting.main.infrastructure.dto.user.User
 import ru.psychologicalTesting.main.infrastructure.models.UserModel
+import ru.psychologicalTesting.main.utils.now
 import java.util.*
 
 @Single
@@ -28,6 +30,8 @@ class ExposedUserRepository : UserRepository {
             it[this.patronymic] = patronymic
             it[this.email] = email
             it[this.password] = password
+            it[this.registeredAt] = LocalDateTime.now()
+            it[this.lastLoginAt] = null
         }
 
         return User(
@@ -36,7 +40,9 @@ class ExposedUserRepository : UserRepository {
             surname = insertedRow[UserModel.surname],
             patronymic = insertedRow[UserModel.patronymic],
             email = insertedRow[UserModel.email],
-            password = insertedRow[UserModel.password]
+            password = insertedRow[UserModel.password],
+            registeredAt = insertedRow[UserModel.registeredAt],
+            lastLoginAt = insertedRow[UserModel.lastLoginAt]
         )
     }
 
@@ -60,7 +66,7 @@ class ExposedUserRepository : UserRepository {
             ?.toUser()
     }
 
-    override fun updateById(
+    override fun update(
         user: User
     ): Boolean {
 
@@ -73,6 +79,7 @@ class ExposedUserRepository : UserRepository {
                 it[patronymic] = user.patronymic
                 it[email] = user.email
                 it[password] = user.password
+                it[lastLoginAt] = user.lastLoginAt
             }
 
         return affectedRow > 0
@@ -93,7 +100,9 @@ class ExposedUserRepository : UserRepository {
         surname = this[UserModel.surname],
         patronymic = this[UserModel.patronymic],
         email = this[UserModel.email],
-        password = this[UserModel.password]
+        password = this[UserModel.password],
+        registeredAt = this[UserModel.registeredAt],
+        lastLoginAt = this[UserModel.lastLoginAt]
     )
 
 }
