@@ -11,6 +11,7 @@ import ru.psychologicalTesting.main.infrastructure.services.authentication.resul
 import ru.psychologicalTesting.main.infrastructure.services.authentication.results.RegistrationResult
 import ru.psychologicalTesting.main.infrastructure.services.authentication.results.TokenValidationResult
 import ru.psychologicalTesting.main.infrastructure.services.user.UserService
+import ru.psychologicalTesting.main.utils.now
 import ru.psychologicalTesting.main.utils.nowUTC
 import ru.psychologicalTesting.main.utils.plus
 import java.util.*
@@ -67,6 +68,12 @@ class DefaultAuthenticationService(
         }
 
         tokenRepository.clearExpired()
+
+        userRepository.update(
+            user.copy(
+                lastLoginAt = LocalDateTime.now()
+            )
+        )
 
         return LoginResult.Success(
             token = generateToken(user.id)

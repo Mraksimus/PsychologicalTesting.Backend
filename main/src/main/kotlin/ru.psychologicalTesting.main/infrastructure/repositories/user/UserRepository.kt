@@ -1,6 +1,6 @@
 package ru.psychologicalTesting.main.infrastructure.repositories.user
 
-import ru.psychologicalTesting.main.infrastructure.dto.User
+import ru.psychologicalTesting.main.infrastructure.dto.user.User
 import java.util.*
 
 interface UserRepository {
@@ -21,7 +21,7 @@ interface UserRepository {
         userId: UUID
     ): User?
 
-    fun updateById(
+    fun update(
         user: User
     ): Boolean
 
