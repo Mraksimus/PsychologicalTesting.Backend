@@ -2,6 +2,7 @@ package ru.psychologicalTesting.main.infrastructure.repositories.testing.session
 
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
@@ -103,13 +104,11 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
         val sessions = TestingSessionModel
             .selectAll()
             .where(TestingSessionModel.userId eq userId)
+            .orderBy(TestingSessionModel.createdAt to SortOrder.DESC)
             .offset(offset)
             .limit(limit)
             .map {
                 it.toExistingTestingSession()
-            }
-            .sortedByDescending {
-                it.createdAt
             }
 
         return PageResponse(
