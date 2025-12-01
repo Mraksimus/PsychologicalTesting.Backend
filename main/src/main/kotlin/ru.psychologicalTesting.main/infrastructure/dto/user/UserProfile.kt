@@ -9,6 +9,9 @@ data class UserProfile(
     val surname: String,
     val patronymic: String? = null,
     val email: String,
+    val sessionsCount: Int,
+    val completedSessionsCount: Int,
+    val inProgressSessionsCount: Int,
     val registeredAt: LocalDateTime,
     val lastLoginAt: LocalDateTime? = null
 )

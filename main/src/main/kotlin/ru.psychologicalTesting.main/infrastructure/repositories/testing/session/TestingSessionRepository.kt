@@ -1,8 +1,8 @@
 package ru.psychologicalTesting.main.infrastructure.repositories.testing.session
 
-import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
 import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
 import ru.psychologicalTesting.common.testing.session.NewTestingSession
+import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
 import java.util.*
 
 interface TestingSessionRepository {
@@ -14,6 +14,10 @@ interface TestingSessionRepository {
     fun findOwnerIdBySessionId(
         sessionId: UUID
     ): UUID?
+
+    fun findAllByUserId(
+        userId: UUID
+    ): List<ExistingTestingSession>
 
     fun findOneById(
         id: UUID
