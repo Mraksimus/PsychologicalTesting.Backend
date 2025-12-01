@@ -8,7 +8,9 @@ import ru.psychologicalTesting.common.compat.SerialUUID
 data class NewTest(
     override val name: String,
     override val description: String,
+    override val category: TestCategory,
     override val transcript: String,
+    override val questionsCount: Int,
     override val durationMins: String,
     override val isActive: Boolean
 ) : Test
@@ -18,7 +20,9 @@ data class ExistingTest(
     val id: SerialUUID,
     override val name: String,
     override val description: String,
+    override val category: TestCategory,
     override val transcript: String,
+    override val questionsCount: Int,
     override val durationMins: String,
     override val isActive: Boolean,
     val createdAt: LocalDateTime,
@@ -29,7 +33,9 @@ data class ExistingTest(
 sealed interface Test {
     val name: String
     val description: String
+    val category: TestCategory
     val transcript: String
+    val questionsCount: Int
     val durationMins: String
     val isActive: Boolean
 }

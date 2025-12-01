@@ -1,5 +1,6 @@
 package ru.psychologicalTesting.main.plugins
 
+import MigrationUtils
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.Application
 import kotlinx.coroutines.Dispatchers
@@ -86,7 +87,7 @@ fun main() {
             tables = tables,
             scriptDirectory = "main/src/main/resources/migrations",
             // Make sure to change script name before generating, otherwise rollback the overridden file :)
-            scriptName = "V5__update_user_table",
+            scriptName = "V7__update_test_table"
         )
     }
 

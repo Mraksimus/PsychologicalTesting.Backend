@@ -11,11 +11,11 @@ import org.jetbrains.exposed.sql.max
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
+import ru.psychologicalTesting.common.testing.test.ExistingTest
+import ru.psychologicalTesting.common.testing.test.NewTest
 import ru.psychologicalTesting.main.extensions.deleteById
 import ru.psychologicalTesting.main.extensions.updateById
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
-import ru.psychologicalTesting.common.testing.test.ExistingTest
-import ru.psychologicalTesting.common.testing.test.NewTest
 import ru.psychologicalTesting.main.infrastructure.models.testing.TestModel
 import ru.psychologicalTesting.main.utils.now
 import java.util.*
@@ -40,6 +40,7 @@ class ExposedTestRepository : TestRepository {
         val insertedRow = TestModel.insert {
             it[name] = dto.name
             it[description] = dto.description
+            it[category] = dto.category
             it[transcript] = dto.transcript
             it[durationMins] = dto.durationMins
             it[isActive] = dto.isActive
@@ -51,7 +52,9 @@ class ExposedTestRepository : TestRepository {
             id = insertedRow[TestModel.id].value,
             name = insertedRow[TestModel.name],
             description = insertedRow[TestModel.description],
+            category = insertedRow[TestModel.category],
             transcript = insertedRow[TestModel.transcript],
+            questionsCount = insertedRow[TestModel.questionsCount],
             durationMins = insertedRow[TestModel.durationMins],
             isActive = insertedRow[TestModel.isActive],
             createdAt = insertedRow[TestModel.createdAt],
@@ -173,7 +176,9 @@ class ExposedTestRepository : TestRepository {
         id = this[TestModel.id].value,
         name = this[TestModel.name],
         description = this[TestModel.description],
+        category = this[TestModel.category],
         transcript = this[TestModel.transcript],
+        questionsCount = this[TestModel.questionsCount],
         durationMins = this[TestModel.durationMins],
         isActive = this[TestModel.isActive],
         createdAt = this[TestModel.createdAt],
