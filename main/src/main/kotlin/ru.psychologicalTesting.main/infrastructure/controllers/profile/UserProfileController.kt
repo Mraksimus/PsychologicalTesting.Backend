@@ -13,10 +13,13 @@ import io.ktor.server.routing.Routing
 import io.ktor.server.routing.route
 import io.ktor.util.reflect.typeInfo
 import org.koin.ktor.ext.inject
+import ru.psychologicalTesting.main.infrastructure.controllers.common.parameters.PageParameters
 import ru.psychologicalTesting.main.infrastructure.controllers.common.responses.BadRequestResponse
 import ru.psychologicalTesting.main.infrastructure.controllers.common.responses.NotFoundResponse
 import ru.psychologicalTesting.main.infrastructure.controllers.common.responses.respondNotFound
 import ru.psychologicalTesting.main.infrastructure.controllers.profile.requests.ChangeUserFullNameRequest
+import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
+import ru.psychologicalTesting.main.infrastructure.dto.TestingSessionCard
 import ru.psychologicalTesting.main.infrastructure.dto.user.UserProfile
 import ru.psychologicalTesting.main.infrastructure.services.user.UserService
 import ru.psychologicalTesting.main.infrastructure.services.user.results.ChangeUserFullNameResult
@@ -61,6 +64,32 @@ private fun Route.configureAuthenticatedRoutes() {
                 is GetUserProfileResult.Success ->
                     call.respond(HttpStatusCode.OK, result.userProfile)
             }
+        }
+
+    }
+
+    get("sessions", ::PageParameters) {
+
+        description = "Get user testing session cards paged"
+        tags = listOf(SWAGGER_TAG)
+
+        responses {
+            HttpStatusCode.OK returns typeInfo<PageResponse<TestingSessionCard>>()
+        }
+
+        handle {
+
+            val (userId) = call.principal<UserPrincipal>()!!
+
+            val result = suspendedTransaction {
+                userService.getAllSessionCardsByUserIdPaged(
+                    userId = userId,
+                    offset = parameters.offset,
+                    limit = parameters.limit
+                )
+            }
+
+            call.respond(HttpStatusCode.OK, result)
         }
 
     }

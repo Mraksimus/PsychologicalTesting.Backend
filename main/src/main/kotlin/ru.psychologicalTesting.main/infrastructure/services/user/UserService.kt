@@ -1,5 +1,7 @@
 package ru.psychologicalTesting.main.infrastructure.services.user
 
+import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
+import ru.psychologicalTesting.main.infrastructure.dto.TestingSessionCard
 import ru.psychologicalTesting.main.infrastructure.dto.user.User
 import ru.psychologicalTesting.main.infrastructure.services.user.results.ChangeUserFullNameResult
 import ru.psychologicalTesting.main.infrastructure.services.user.results.GetUserProfileResult
@@ -16,6 +18,12 @@ interface UserService {
     ): User
 
     fun getUserProfileById(userId: UUID): GetUserProfileResult
+
+    fun getAllSessionCardsByUserIdPaged(
+        userId: UUID,
+        offset: Long,
+        limit: Int
+    ): PageResponse<TestingSessionCard>
 
     fun changeUserFullName(
         userId: UUID,
