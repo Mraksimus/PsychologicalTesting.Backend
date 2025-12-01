@@ -1,5 +1,6 @@
 package ru.psychologicalTesting.main.infrastructure.controllers.profile
 
+import dev.h4kt.ktorDocs.dsl.delete
 import dev.h4kt.ktorDocs.dsl.get
 import dev.h4kt.ktorDocs.dsl.put
 import io.ktor.http.HttpStatusCode
@@ -103,6 +104,33 @@ private fun Route.configureAuthenticatedRoutes() {
                     call.respond(HttpStatusCode.InternalServerError, "User(id=$userId) was not updated")
                 is ChangeUserFullNameResult.Success ->
                     call.respond(HttpStatusCode.OK, "User(id=$userId) is updated")
+            }
+        }
+
+    }
+
+    delete {
+
+        description = "Delete user"
+        tags = listOf(SWAGGER_TAG)
+
+        responses {
+            HttpStatusCode.OK returns typeInfo<String>()
+            HttpStatusCode.BadRequest returns typeInfo<BadRequestResponse>()
+        }
+
+        handle {
+
+            val (userId) = call.principal<UserPrincipal>()!!
+
+            val result = suspendedTransaction {
+                userService.delete(userId)
+            }
+
+            if (result) {
+                call.respond(HttpStatusCode.OK, "User(id=$userId) was deleted")
+            } else {
+                call.respond(HttpStatusCode.BadRequest)
             }
         }
 

@@ -73,8 +73,8 @@ class DefaultUserService(
         return ChangeUserFullNameResult.Success
     }
 
-    override fun delete(userId: UUID) {
-        userRepository.deleteById(userId)
+    override fun delete(userId: UUID): Boolean {
+        return userRepository.deleteById(userId)
     }
 
 }

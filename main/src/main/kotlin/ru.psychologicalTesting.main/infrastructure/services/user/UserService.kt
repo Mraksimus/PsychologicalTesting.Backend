@@ -24,6 +24,6 @@ interface UserService {
         patronymic: String?
     ): ChangeUserFullNameResult
 
-    fun delete(userId: UUID)
+    fun delete(userId: UUID): Boolean
 
 }
