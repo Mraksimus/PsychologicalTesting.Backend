@@ -2,6 +2,7 @@ package ru.psychologicalTesting.main.infrastructure.services.user
 
 import org.koin.core.annotation.Single
 import org.mindrot.jbcrypt.BCrypt
+import ru.psychologicalTesting.common.testing.session.TestingSession
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
 import ru.psychologicalTesting.main.infrastructure.dto.TestingSessionCard
 import ru.psychologicalTesting.main.infrastructure.dto.user.User
@@ -43,12 +44,25 @@ class DefaultUserService(
 
         val user = userRepository.findByUserId(userId) ?: return GetUserProfileResult.UserNotFound
 
+        val sessions = sessionRepository.findAllByUserId(userId)
+
+        val inProgressSessionsCount = sessions.count {
+            it.status == TestingSession.Status.IN_PROGRESS
+        }
+
+        val completedSessionsCount = sessions.count {
+            it.status == TestingSession.Status.COMPLETED
+        }
+
         return GetUserProfileResult.Success(
             userProfile = UserProfile(
                 name = user.name,
                 surname = user.surname,
                 patronymic = user.patronymic,
                 email = user.email,
+                sessionsCount = sessions.size,
+                inProgressSessionsCount = inProgressSessionsCount,
+                completedSessionsCount = completedSessionsCount,
                 registeredAt = user.registeredAt,
                 lastLoginAt = user.lastLoginAt
             )

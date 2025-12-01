@@ -7,12 +7,12 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.koin.core.annotation.Single
-import ru.psychologicalTesting.main.extensions.deleteById
-import ru.psychologicalTesting.main.extensions.updateById
-import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
 import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
 import ru.psychologicalTesting.common.testing.session.NewTestingSession
 import ru.psychologicalTesting.common.testing.session.TestingSession
+import ru.psychologicalTesting.main.extensions.deleteById
+import ru.psychologicalTesting.main.extensions.updateById
+import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
 import ru.psychologicalTesting.main.infrastructure.models.testing.TestingSessionModel
 import ru.psychologicalTesting.main.utils.now
 import java.util.*
@@ -51,6 +51,17 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
             .firstOrNull()
             ?.let {
                 it[TestingSessionModel.userId].value
+            }
+    }
+
+    override fun findAllByUserId(
+        userId: UUID
+    ): List<ExistingTestingSession> {
+        return TestingSessionModel
+            .selectAll()
+            .where(TestingSessionModel.userId eq userId)
+            .map {
+                it.toExistingTestingSession()
             }
     }
 
