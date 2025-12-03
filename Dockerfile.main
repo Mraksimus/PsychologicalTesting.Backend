@@ -1,0 +1,28 @@
+# Build stage - use ktor docker plugin to build the image
+FROM gradle:8-jdk21 AS builder
+
+WORKDIR /app
+
+# Copy Gradle files
+COPY gradle/ ./gradle/
+COPY gradlew ./
+COPY gradlew.bat ./
+COPY build.gradle.kts ./
+COPY settings.gradle.kts ./
+COPY gradle.properties ./
+
+# Copy all source code (Gradle expects all projects from settings.gradle.kts)
+COPY common/ ./common/
+COPY main/ ./main/
+COPY llm/ ./llm/
+
+# Build Docker image using ktor docker plugin buildImage task
+# Skip detekt (code style checker) as it's not needed for Docker builds
+# This creates the image tar file in main/build/jib-image.tar
+# The image will be 'psychological-testing-main:latest' with all resources (migrations) properly included
+RUN ./gradlew :main:buildImage -x detekt --no-daemon
+
+# Copy the image tar file to a location where it can be loaded
+# Note: The actual image needs to be loaded separately using: docker load < main/build/jib-image.tar
+# For docker-compose, we'll use a script or manual load before running docker-compose
+

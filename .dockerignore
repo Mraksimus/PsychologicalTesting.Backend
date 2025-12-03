@@ -1,0 +1,24 @@
+# Build artifacts
+build/
+.gradle/
+*.iml
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test files (unit/integration), keep source packages like `testing/test`
+src/**/test/**
+src/**/tests/**
+
+# Development files
+**/run/development/**
+

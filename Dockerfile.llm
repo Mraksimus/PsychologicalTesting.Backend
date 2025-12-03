@@ -1,0 +1,44 @@
+# Build stage
+FROM gradle:8-jdk21 AS builder
+
+WORKDIR /app
+
+# Copy Gradle files
+COPY gradle/ ./gradle/
+COPY gradlew ./
+COPY gradlew.bat ./
+COPY build.gradle.kts ./
+COPY settings.gradle.kts ./
+COPY gradle.properties ./
+
+# Copy all source code (Gradle expects all projects from settings.gradle.kts)
+COPY common/ ./common/
+COPY llm/ ./llm/
+COPY main/ ./main/
+
+# Build all projects to ensure KSP generates all required classes and dependencies are resolved
+# Skip detekt (code style checker) as it's not needed for Docker builds
+# Then install llm distribution (installDist will use already built artifacts)
+RUN ./gradlew build -x detekt --no-daemon && \
+    ./gradlew :llm:installDist --no-daemon
+
+# Runtime stage
+FROM eclipse-temurin:21-jre-alpine
+
+WORKDIR /home/app/llm
+
+# Copy the built distribution
+COPY --from=builder /app/llm/build/install/llm/ ./
+
+# Create config directory
+RUN mkdir -p ./config
+
+# Copy API JSON if exists (create empty if not)
+RUN echo "{}" > ./api.json
+
+# Expose port
+EXPOSE 1489
+
+# Run the application (use CMD so it can be overridden in docker-compose)
+CMD ["./bin/llm", "-config=config/application.conf"]
+

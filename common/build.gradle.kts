@@ -8,6 +8,10 @@ repositories {
     mavenCentral()
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
 dependencies {
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.datetime)
