@@ -7,7 +7,7 @@ import ru.psychologicalTesting.llm.infrastructure.controllers.ollama.configureOl
 
 fun Application.configureRouting() = routing {
 
-    swaggerUI(path = "/docs", swaggerFile = "api.json")
+//    swaggerUI(path = "/docs", swaggerFile = "api.json")
 
     configureOllamaRouting()
 
