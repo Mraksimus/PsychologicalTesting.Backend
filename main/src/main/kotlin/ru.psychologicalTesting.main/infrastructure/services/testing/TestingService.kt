@@ -1,9 +1,10 @@
 package ru.psychologicalTesting.main.infrastructure.services.testing
 
-import ru.psychologicalTesting.common.testing.question.ExistingQuestion
+import ru.psychologicalTesting.common.testing.session.SessionAnswer
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CloseSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CompleteSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CreateSessionResult
+import ru.psychologicalTesting.main.infrastructure.services.testing.results.GetSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.UpdateAnswersResult
 import java.util.*
 
@@ -14,9 +15,13 @@ interface TestingService {
         testId: UUID
     ): CreateSessionResult
 
+    fun getSessionById(
+        sessionId: UUID
+    ): GetSessionResult
+
     fun updateAnswers(
         sessionId: UUID,
-        questionResponses: List<ExistingQuestion>
+        answers: List<SessionAnswer>
     ): UpdateAnswersResult
 
     suspend fun completeSession(

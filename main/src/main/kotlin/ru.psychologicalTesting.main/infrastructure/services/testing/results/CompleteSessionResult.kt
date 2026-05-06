@@ -1,7 +1,7 @@
 package ru.psychologicalTesting.main.infrastructure.services.testing.results
 
 import kotlinx.serialization.Serializable
-import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
+import ru.psychologicalTesting.common.testing.session.FullTestingSession
 
 sealed class CompleteSessionResult {
 
@@ -21,7 +21,7 @@ sealed class CompleteSessionResult {
 
     @Serializable
     data class Success(
-        val session: ExistingTestingSession
+        val session: FullTestingSession
     ) : CompleteSessionResult()
 
 }

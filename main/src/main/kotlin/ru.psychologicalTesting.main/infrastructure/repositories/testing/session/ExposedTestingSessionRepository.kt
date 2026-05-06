@@ -28,7 +28,7 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
         val insertedRow = TestingSessionModel.insert {
             it[userId] = dto.userId
             it[testId] = dto.testId
-            it[questionResponses] = dto.questionResponses
+            it[answers] = emptyList()
             it[status] = TestingSession.Status.IN_PROGRESS
             it[createdAt] = LocalDateTime.now()
         }
@@ -37,7 +37,7 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
             id = insertedRow[TestingSessionModel.id].value,
             userId = insertedRow[TestingSessionModel.userId].value,
             testId = insertedRow[TestingSessionModel.testId].value,
-            questionResponses = insertedRow[TestingSessionModel.questionResponses],
+            answers = insertedRow[TestingSessionModel.answers],
             status = insertedRow[TestingSessionModel.status],
             createdAt = insertedRow[TestingSessionModel.createdAt]
         )
@@ -125,7 +125,7 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
     ): Boolean {
 
         val affectedRows = TestingSessionModel.updateById(id) {
-            it[TestingSessionModel.questionResponses] = dto.questionResponses
+            it[TestingSessionModel.answers] = dto.answers
             it[TestingSessionModel.result] = dto.result
             it[TestingSessionModel.status] = dto.status
             it[TestingSessionModel.closedAt] = dto.closedAt
@@ -144,7 +144,7 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
         id = this[TestingSessionModel.id].value,
         userId = this[TestingSessionModel.userId].value,
         testId = this[TestingSessionModel.testId].value,
-        questionResponses = this[TestingSessionModel.questionResponses],
+        answers = this[TestingSessionModel.answers],
         result = this[TestingSessionModel.result],
         status = this[TestingSessionModel.status],
         createdAt = this[TestingSessionModel.createdAt],

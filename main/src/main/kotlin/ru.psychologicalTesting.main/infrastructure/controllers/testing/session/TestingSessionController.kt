@@ -28,11 +28,13 @@ import ru.psychologicalTesting.main.infrastructure.controllers.testing.session.t
 import ru.psychologicalTesting.main.infrastructure.controllers.testing.session.types.parameters.TestingSessionScopeParameters
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
 import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
+import ru.psychologicalTesting.common.testing.session.FullTestingSession
 import ru.psychologicalTesting.main.infrastructure.repositories.testing.session.TestingSessionRepository
 import ru.psychologicalTesting.main.infrastructure.services.testing.TestingService
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CloseSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CompleteSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CreateSessionResult
+import ru.psychologicalTesting.main.infrastructure.services.testing.results.GetSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.UpdateAnswersResult
 import ru.psychologicalTesting.main.plugins.authentication.UserPrincipal
 import ru.psychologicalTesting.main.plugins.suspendedTransaction
@@ -56,7 +58,7 @@ private fun Route.configureAuthenticatedRoutes() {
         tags = listOf(SWAGGER_TAG)
 
         responses {
-            HttpStatusCode.OK returns typeInfo<ExistingTestingSession>()
+            HttpStatusCode.OK returns typeInfo<FullTestingSession>()
             HttpStatusCode.Conflict returns typeInfo<ConflictResponse>()
             HttpStatusCode.NotFound returns typeInfo<NotFoundResponse>()
             HttpStatusCode.BadRequest returns typeInfo<BadRequestResponse>()
@@ -124,20 +126,20 @@ private fun Route.configureAuthenticatedRoutes() {
                 tags = listOf(SWAGGER_TAG)
 
                 responses {
-                    HttpStatusCode.OK returns typeInfo<ExistingTestingSession>()
+                    HttpStatusCode.OK returns typeInfo<FullTestingSession>()
                     HttpStatusCode.NotFound returns typeInfo<NotFoundResponse>()
                 }
 
                 handle {
 
                     val result = suspendedTransaction {
-                        testingSessionRepository.findOneById(parameters.sessionId)
+                        testingService.getSessionById(parameters.sessionId)
                     }
 
-                    if (result == null) {
-                        call.respondNotFound("Session(id=${parameters.sessionId}) does not exist)")
+                    if (result is GetSessionResult.Success) {
+                        call.respond(result.session)
                     } else {
-                        call.respond(result)
+                        call.respondNotFound("Session(id=${parameters.sessionId}) does not exist)")
                     }
                 }
 
@@ -158,12 +160,12 @@ private fun Route.configureAuthenticatedRoutes() {
 
                 handle {
 
-                    val (questionResponses) = call.receive<UpdateAnswersSessionRequest>()
+                    val (answers) = call.receive<UpdateAnswersSessionRequest>()
 
                     val result = suspendedTransaction {
                         testingService.updateAnswers(
                             sessionId = parameters.sessionId,
-                            questionResponses = questionResponses
+                            answers = answers
                         )
                     }
 

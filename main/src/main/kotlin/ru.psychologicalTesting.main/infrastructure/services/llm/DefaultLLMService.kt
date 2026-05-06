@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
 import ru.psychologicalTesting.common.messages.LLMMessage
 import ru.psychologicalTesting.common.testing.question.ExistingQuestion
-import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
+import ru.psychologicalTesting.common.testing.session.SessionAnswer
 import ru.psychologicalTesting.common.testing.test.ExistingTest
 import ru.psychologicalTesting.common.types.chat.LLMChatRequest
 import ru.psychologicalTesting.common.types.LLMResponse
@@ -94,13 +94,15 @@ class DefaultLLMService(
     override suspend fun sendTestResult(
         test: ExistingTest,
         questions: List<ExistingQuestion>,
-        session: ExistingTestingSession
+        answers: List<SessionAnswer>,
+        totalScore: Int
     ): PromptResult {
 
         val responseBody = LLMTestTranscriptionRequest(
             test = test,
             questions = questions,
-            session = session
+            answers = answers,
+            totalScore = totalScore
         )
 
         val response = try {

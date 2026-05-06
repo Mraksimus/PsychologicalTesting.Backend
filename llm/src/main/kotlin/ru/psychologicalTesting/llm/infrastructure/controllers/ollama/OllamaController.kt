@@ -15,13 +15,12 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.common.messages.LLMMessage
-import ru.psychologicalTesting.common.types.chat.LLMChatRequest
 import ru.psychologicalTesting.common.types.LLMResponse
+import ru.psychologicalTesting.common.types.chat.LLMChatRequest
 import ru.psychologicalTesting.common.types.testTranscription.LLMTestTranscriptionRequest
 import ru.psychologicalTesting.llm.config.ollama.OllamaConfig
 
@@ -70,33 +69,29 @@ private fun Route.configureChatRoutes() {
             }
         }
 
-        val response = runBlocking {
+        val response = llm().execute(
+            prompt = prompt("chat") {
 
-            llm().execute(
-                prompt = prompt("chat") {
+                system(ollamaConfig.chatSystemPrompt)
 
-                    system(ollamaConfig.chatSystemPrompt)
-
-                    request.messages.forEach { msg ->
-                        when (msg.role) {
-                            LLMMessage.Role.SYSTEM -> system(msg.content)
-                            LLMMessage.Role.USER -> user(msg.content)
-                            LLMMessage.Role.ASSISTANT -> assistant(msg.content)
-                        }
+                request.messages.forEach { msg ->
+                    when (msg.role) {
+                        LLMMessage.Role.SYSTEM -> system(msg.content)
+                        LLMMessage.Role.USER -> user(msg.content)
+                        LLMMessage.Role.ASSISTANT -> assistant(msg.content)
                     }
+                }
 
-                    user(request.prompt)
+                user(request.prompt)
 
-                },
-                model = LLModel(
-                    provider = LLMProvider.Ollama,
-                    id = ollamaConfig.chatModel,
-                    capabilities = listOf(),
-                    contextLength = 32_000
-                )
+            },
+            model = LLModel(
+                provider = LLMProvider.Ollama,
+                id = ollamaConfig.chatModel,
+                capabilities = listOf(),
+                contextLength = 32_000
             )
-
-        }
+        )
 
         val text = response.joinToString(separator = "") { it.content }
         call.respond(HttpStatusCode.OK, LLMResponse(text))
@@ -116,30 +111,28 @@ private fun Route.configureChatRoutes() {
         val (
             test,
             questions,
-            session
+            answers,
+            totalScore
         ) = call.receive<LLMTestTranscriptionRequest>()
 
-        val response = runBlocking {
+        val response = llm().execute(
+            prompt = prompt("test_transcription") {
 
-            llm().execute(
-                prompt = prompt("test_transcription") {
+                system(ollamaConfig.testTranscriptionSystemPrompt)
 
-                    system(ollamaConfig.testTranscriptionSystemPrompt)
+                system("Информация о тесте: ${Json.encodeToString(test)}")
+                system("Вопросы теста и варианты ответов: ${Json.encodeToString(questions)}")
+                system("Ответы пользователя: ${Json.encodeToString(answers)}")
+                system("Итоговое количество баллов: ${Json.encodeToString(totalScore)}")
 
-                    system("Информация о тесте: ${Json.encodeToString(test)}")
-                    system("Вопросы теста и варианты ответов: ${Json.encodeToString(questions)}")
-                    system("Сессия пользователя с ответами на вопросы: ${Json.encodeToString(session)}")
-
-                },
-                model = LLModel(
-                    provider = LLMProvider.Ollama,
-                    id = ollamaConfig.testTranscriptionModel,
-                    capabilities = listOf(),
-                    contextLength = 32_000
-                )
+            },
+            model = LLModel(
+                provider = LLMProvider.Ollama,
+                id = ollamaConfig.testTranscriptionModel,
+                capabilities = listOf(),
+                contextLength = 32_000
             )
-
-        }
+        )
 
         val text = response.joinToString(separator = "") { it.content }
         call.respond(HttpStatusCode.OK, LLMResponse(text))

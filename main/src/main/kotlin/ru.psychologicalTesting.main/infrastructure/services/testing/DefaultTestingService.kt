@@ -2,9 +2,10 @@ package ru.psychologicalTesting.main.infrastructure.services.testing
 
 import kotlinx.datetime.LocalDateTime
 import org.koin.core.annotation.Single
-import ru.psychologicalTesting.common.testing.question.ExistingQuestion
-import ru.psychologicalTesting.common.testing.question.toClient
+import ru.psychologicalTesting.common.testing.question.QuestionContentType
+import ru.psychologicalTesting.common.testing.session.FullTestingSession
 import ru.psychologicalTesting.common.testing.session.NewTestingSession
+import ru.psychologicalTesting.common.testing.session.SessionAnswer
 import ru.psychologicalTesting.common.testing.session.TestingSession
 import ru.psychologicalTesting.main.infrastructure.repositories.testing.question.QuestionRepository
 import ru.psychologicalTesting.main.infrastructure.repositories.testing.session.TestingSessionRepository
@@ -14,6 +15,7 @@ import ru.psychologicalTesting.main.infrastructure.services.llm.results.PromptRe
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CloseSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CompleteSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CreateSessionResult
+import ru.psychologicalTesting.main.infrastructure.services.testing.results.GetSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.UpdateAnswersResult
 import ru.psychologicalTesting.main.plugins.suspendedTransaction
 import ru.psychologicalTesting.main.utils.now
@@ -45,28 +47,53 @@ class DefaultTestingService(
 
         val questions = questionRepository.findAllByTestId(testId)
 
-        val questionResponses = questions.map { question ->
-            question.copy(
-                content = question.content.toClient(),
-            )
-        }
-
         val newSession = sessionRepository.create(
             dto = NewTestingSession(
                 userId = userId,
-                testId = testId,
-                questionResponses = questionResponses
+                testId = testId
             )
         )
 
         return CreateSessionResult.Success(
-            createdSession = newSession
+            createdSession = FullTestingSession(
+                id = newSession.id,
+                userId = newSession.userId,
+                testId = newSession.testId,
+                questions = questions,
+                answers = newSession.answers,
+                result = newSession.result,
+                status = newSession.status,
+                createdAt = newSession.createdAt,
+                closedAt = newSession.closedAt
+            )
+        )
+    }
+
+    override fun getSessionById(
+        sessionId: UUID
+    ): GetSessionResult {
+
+        val session = sessionRepository.findOneById(sessionId) ?: return GetSessionResult.Error
+        val questions = questionRepository.findAllByTestId(session.testId)
+
+        return GetSessionResult.Success(
+            session = FullTestingSession(
+                id = session.id,
+                userId = session.userId,
+                testId = session.testId,
+                questions = questions,
+                answers = session.answers,
+                result = session.result,
+                status = session.status,
+                createdAt = session.createdAt,
+                closedAt = session.closedAt
+            )
         )
     }
 
     override fun updateAnswers(
         sessionId: UUID,
-        questionResponses: List<ExistingQuestion>
+        answers: List<SessionAnswer>
     ): UpdateAnswersResult {
 
         val session = sessionRepository.findOneById(sessionId) ?: return UpdateAnswersResult.SessionNotFound
@@ -75,14 +102,8 @@ class DefaultTestingService(
             return UpdateAnswersResult.SessionClosed
         }
 
-        val questionResponses = questionResponses.map { question ->
-            question.copy(
-                content = question.content.toClient(),
-            )
-        }
-
         val updatedSession = session.copy(
-            questionResponses = questionResponses,
+            answers = answers
         )
 
         val isUpdate = sessionRepository.update(
@@ -109,16 +130,34 @@ class DefaultTestingService(
 
         val test = testRepository.findOneById(session.testId)!!
 
-        val testQuestions = questionRepository.findAllByTestId(session.testId)
+        val questions = questionRepository.findAllByTestId(session.testId)
 
-        if (testQuestions.size != session.questionResponses.size) {
+        val answeredIds = session.answers.filter {
+            it.selectedIndex != null
+        }.map {
+            it.questionId
+        }.toSet()
+
+        if (questions.any { it.id !in answeredIds }) {
             return CompleteSessionResult.TestIsNotCompleted
+        }
+
+        val totalScore = questions.sumOf { question ->
+            val answer = session.answers.first { it.questionId == question.id }
+            val content = question.content
+
+            if (content is QuestionContentType.Choice && answer.selectedIndex != null) {
+                content.options[answer.selectedIndex!!].score
+            } else {
+                0
+            }
         }
 
         val requestResult = llmService.sendTestResult(
             test = test,
-            questions = testQuestions,
-            session = session,
+            questions = questions,
+            answers = session.answers,
+            totalScore = totalScore,
         )
 
         val llmResponse = if (requestResult is PromptResult.Success) {
@@ -145,7 +184,17 @@ class DefaultTestingService(
         }
 
         return CompleteSessionResult.Success(
-            session = updatedSession
+            session = FullTestingSession(
+                id = updatedSession.id,
+                userId = updatedSession.userId,
+                testId = updatedSession.testId,
+                questions = questions,
+                answers = updatedSession.answers,
+                result = updatedSession.result,
+                status = updatedSession.status,
+                createdAt = updatedSession.createdAt,
+                closedAt = updatedSession.closedAt,
+            )
         )
     }
 

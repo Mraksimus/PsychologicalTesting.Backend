@@ -17,6 +17,7 @@ data class ExistingQuestion(
     val position: Int
 ) : Question
 
+@Serializable
 sealed interface Question {
     val testId: SerialUUID
     val content: QuestionContentType
