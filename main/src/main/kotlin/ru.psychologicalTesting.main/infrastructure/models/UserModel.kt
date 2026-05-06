@@ -2,6 +2,7 @@ package ru.psychologicalTesting.main.infrastructure.models
 
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import org.jetbrains.exposed.sql.lowerCase
 import ru.psychologicalTesting.main.utils.now
@@ -15,6 +16,11 @@ object UserModel : UUIDTable("user") {
     val password = text("password")
     val registeredAt = datetime("registered_at").default(LocalDateTime.now())
     val lastLoginAt = datetime("last_login_at").nullable()
+    val roleId = reference(
+        name = "role_id",
+        foreign = RoleModel,
+        onDelete = ReferenceOption.SET_NULL
+    ).nullable()
 
     init {
 

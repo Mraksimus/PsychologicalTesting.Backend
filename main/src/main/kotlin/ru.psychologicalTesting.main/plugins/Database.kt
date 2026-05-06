@@ -13,6 +13,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.main.config.database.DatabaseConfig
 import ru.psychologicalTesting.main.infrastructure.models.MessageModule
+import ru.psychologicalTesting.main.infrastructure.models.RoleModel
 import ru.psychologicalTesting.main.infrastructure.models.TokenModel
 import ru.psychologicalTesting.main.infrastructure.models.UserModel
 import ru.psychologicalTesting.main.infrastructure.models.testing.QuestionModel
@@ -66,7 +67,8 @@ fun main() {
         MessageModule,
         TestModel,
         QuestionModel,
-        TestingSessionModel
+        TestingSessionModel,
+        RoleModel
     )
 
     val host = System.getenv("DB_HOST") ?: "localhost"

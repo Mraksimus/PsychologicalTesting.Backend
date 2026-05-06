@@ -10,6 +10,7 @@ import ru.psychologicalTesting.main.infrastructure.controllers.authentication.re
 import ru.psychologicalTesting.main.infrastructure.controllers.authentication.requests.RegisterRequest
 import ru.psychologicalTesting.main.infrastructure.controllers.profile.requests.ChangeUserFullNameRequest
 import ru.psychologicalTesting.main.infrastructure.repositories.user.UserRepository
+import ru.psychologicalTesting.main.infrastructure.validators.role.newRoleValidator
 
 fun Application.configureAkkurate() {
 
@@ -21,6 +22,7 @@ fun Application.configureAkkurate() {
         registerValidator(LoginRequest.validator)
         registerValidator(RegisterRequest.validator(koin.get<UserRepository>()))
         registerValidator(ChangeUserFullNameRequest.validator)
+        registerValidator(newRoleValidator)
     }
 
 }
