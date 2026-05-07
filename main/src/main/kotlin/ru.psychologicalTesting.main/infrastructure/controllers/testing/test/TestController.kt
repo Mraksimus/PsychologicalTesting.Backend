@@ -39,7 +39,8 @@ private fun Route.configureAuthenticatedRoutes() {
             val result = suspendedTransaction {
                 testRepository.findAllPage(
                     offset = parameters.offset,
-                    limit = parameters.limit
+                    limit = parameters.limit,
+                    activeOnly = true
                 )
             }
 

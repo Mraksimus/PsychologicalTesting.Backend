@@ -78,6 +78,8 @@ private fun Route.configureAuthenticatedRoutes() {
             when (result) {
                 is CreateSessionResult.TestNotFound ->
                     call.respondNotFound("Test (id=${parameters.testId}) does not exist)")
+                is CreateSessionResult.TestNotActive ->
+                    call.respondBadRequest("Test (id=${parameters.testId}) is not active")
                 is CreateSessionResult.TestAlreadyStarted ->
                     call.respondConflict("Testing session with test(id=${parameters.testId}) already started")
                 is CreateSessionResult.Success ->

@@ -2,6 +2,7 @@ package ru.psychologicalTesting.main.infrastructure.repositories.testing.session
 
 import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
 import ru.psychologicalTesting.common.testing.session.NewTestingSession
+import ru.psychologicalTesting.main.infrastructure.dto.AdminSessionItem
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
 import java.util.*
 
@@ -33,6 +34,12 @@ interface TestingSessionRepository {
         offset: Long,
         limit: Int
     ): PageResponse<ExistingTestingSession>
+
+    fun findAllAdminByTestIdPaged(
+        testId: UUID,
+        offset: Long,
+        limit: Int
+    ): PageResponse<AdminSessionItem>
 
     fun update(
         id: UUID,

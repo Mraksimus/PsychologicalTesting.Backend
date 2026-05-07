@@ -9,6 +9,8 @@ sealed class CreateSessionResult {
 
     data object TestNotFound : Error()
 
+    data object TestNotActive : Error()
+
     data object TestAlreadyStarted : Error()
 
     @Serializable

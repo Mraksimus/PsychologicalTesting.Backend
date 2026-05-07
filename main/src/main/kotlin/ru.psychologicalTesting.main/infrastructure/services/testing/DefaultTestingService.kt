@@ -43,7 +43,11 @@ class DefaultTestingService(
             return CreateSessionResult.TestAlreadyStarted
         }
 
-        testRepository.findOneById(testId) ?: return CreateSessionResult.TestNotFound
+        val test = testRepository.findOneById(testId) ?: return CreateSessionResult.TestNotFound
+
+        if (!test.isActive) {
+            return CreateSessionResult.TestNotActive
+        }
 
         val questions = questionRepository.findAllByTestId(testId)
 

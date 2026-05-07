@@ -13,7 +13,9 @@ import ru.psychologicalTesting.common.testing.session.NewTestingSession
 import ru.psychologicalTesting.common.testing.session.TestingSession
 import ru.psychologicalTesting.main.extensions.deleteById
 import ru.psychologicalTesting.main.extensions.updateById
+import ru.psychologicalTesting.main.infrastructure.dto.AdminSessionItem
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
+import ru.psychologicalTesting.main.infrastructure.models.UserModel
 import ru.psychologicalTesting.main.infrastructure.models.testing.TestingSessionModel
 import ru.psychologicalTesting.main.utils.now
 import java.util.*
@@ -116,6 +118,52 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
             offset = offset,
             limit = limit,
             items = sessions
+        )
+    }
+
+    override fun findAllAdminByTestIdPaged(
+        testId: UUID,
+        offset: Long,
+        limit: Int
+    ): PageResponse<AdminSessionItem> {
+
+        val totalCount = TestingSessionModel
+            .selectAll()
+            .where(TestingSessionModel.testId eq testId)
+            .count()
+
+        val items = TestingSessionModel
+            .innerJoin(UserModel)
+            .selectAll()
+            .where { TestingSessionModel.testId eq testId }
+            .orderBy(TestingSessionModel.createdAt to SortOrder.DESC)
+            .offset(offset)
+            .limit(limit)
+            .map {
+                val name = it[UserModel.name]
+                val surname = it[UserModel.surname]
+                val patronymic = it[UserModel.patronymic].orEmpty()
+                val fullName = listOf(surname, name, patronymic)
+                    .filter { part -> part.isNotBlank() }
+                    .joinToString(" ")
+                AdminSessionItem(
+                    id = it[TestingSessionModel.id].value,
+                    userId = it[TestingSessionModel.userId].value,
+                    userFullName = fullName,
+                    userEmail = it[UserModel.email],
+                    testId = it[TestingSessionModel.testId].value,
+                    status = it[TestingSessionModel.status],
+                    result = it[TestingSessionModel.result],
+                    createdAt = it[TestingSessionModel.createdAt],
+                    closedAt = it[TestingSessionModel.closedAt]
+                )
+            }
+
+        return PageResponse(
+            total = totalCount,
+            offset = offset,
+            limit = limit,
+            items = items
         )
     }
 

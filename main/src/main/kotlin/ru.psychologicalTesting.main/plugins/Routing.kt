@@ -3,6 +3,10 @@ package ru.psychologicalTesting.main.plugins
 import io.ktor.server.application.Application
 import io.ktor.server.routing.routing
 import ru.psychologicalTesting.main.infrastructure.controllers.admin.role.configureAdminRoleRouting
+import ru.psychologicalTesting.main.infrastructure.controllers.admin.test.configureAdminTestRouting
+import ru.psychologicalTesting.main.infrastructure.controllers.admin.test.question.configureAdminQuestionRouting
+import ru.psychologicalTesting.main.infrastructure.controllers.admin.test.session.configureAdminTestSessionRouting
+import ru.psychologicalTesting.main.infrastructure.controllers.admin.user.configureAdminUserRouting
 import ru.psychologicalTesting.main.infrastructure.controllers.authentication.configureAuthenticationRouting
 import ru.psychologicalTesting.main.infrastructure.controllers.chat.configureChatRouting
 import ru.psychologicalTesting.main.infrastructure.controllers.profile.conffigureUserProfileRouting
@@ -16,4 +20,8 @@ fun Application.configureRouting() = routing {
     configureTestingSessionRouting()
     conffigureUserProfileRouting()
     configureAdminRoleRouting()
+    configureAdminTestRouting()
+    configureAdminQuestionRouting()
+    configureAdminTestSessionRouting()
+    configureAdminUserRouting()
 }

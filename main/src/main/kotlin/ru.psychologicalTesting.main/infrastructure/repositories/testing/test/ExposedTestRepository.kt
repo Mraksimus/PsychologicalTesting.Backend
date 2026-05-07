@@ -44,6 +44,7 @@ class ExposedTestRepository : TestRepository {
             it[durationMins] = dto.durationMins
             it[isActive] = dto.isActive
             it[createdAt] = LocalDateTime.now()
+            it[updatedAt] = LocalDateTime.now()
             it[this.position] = position
         }
 
@@ -72,15 +73,19 @@ class ExposedTestRepository : TestRepository {
 
     override fun findAllPage(
         offset: Long,
-        limit: Int
+        limit: Int,
+        activeOnly: Boolean
     ): PageResponse<ExistingTest> {
 
-        val totalCount = TestModel
-            .selectAll()
-            .count()
+        fun query() = if (activeOnly) {
+            TestModel.selectAll().where { TestModel.isActive eq true }
+        } else {
+            TestModel.selectAll()
+        }
 
-        val tests = TestModel
-            .selectAll()
+        val totalCount = query().count()
+
+        val tests = query()
             .offset(offset)
             .limit(limit)
             .map {
