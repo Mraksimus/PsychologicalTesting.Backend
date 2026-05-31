@@ -14,7 +14,7 @@ import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.main.config.database.DatabaseConfig
 import ru.psychologicalTesting.main.infrastructure.models.MessageModule
 import ru.psychologicalTesting.main.infrastructure.models.RoleModel
-import ru.psychologicalTesting.main.infrastructure.models.TokenModel
+import ru.psychologicalTesting.main.infrastructure.models.SessionModel
 import ru.psychologicalTesting.main.infrastructure.models.UserModel
 import ru.psychologicalTesting.main.infrastructure.models.testing.QuestionModel
 import ru.psychologicalTesting.main.infrastructure.models.testing.TestModel
@@ -62,7 +62,7 @@ fun applyDatabaseMigrations(
 fun main() {
 
     val tables: Array<Table> = arrayOf(
-        TokenModel,
+        SessionModel,
         UserModel,
         MessageModule,
         TestModel,

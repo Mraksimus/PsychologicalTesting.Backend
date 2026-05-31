@@ -2,13 +2,12 @@ package ru.psychologicalTesting.main.infrastructure.services.authentication.resu
 
 import ru.psychologicalTesting.main.infrastructure.dto.authentication.ExistingSession
 
-sealed class LoginResult {
+sealed class CredentialValidationResult {
 
-    data object InvalidCredentials : LoginResult()
+    data object Invalid : CredentialValidationResult()
 
     data class Success(
-        val session: ExistingSession,
-        val token: String
-    ) : LoginResult()
+        val session: ExistingSession
+    ) : CredentialValidationResult()
 
 }

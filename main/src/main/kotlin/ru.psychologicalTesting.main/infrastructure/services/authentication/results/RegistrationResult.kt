@@ -1,11 +1,12 @@
 package ru.psychologicalTesting.main.infrastructure.services.authentication.results
 
-import ru.psychologicalTesting.main.infrastructure.dto.Token
+import ru.psychologicalTesting.main.infrastructure.dto.authentication.ExistingSession
 
 sealed class RegistrationResult {
 
     data class Success(
-        val token: Token
+        val session: ExistingSession,
+        val token: String
     ) : RegistrationResult()
 
 }

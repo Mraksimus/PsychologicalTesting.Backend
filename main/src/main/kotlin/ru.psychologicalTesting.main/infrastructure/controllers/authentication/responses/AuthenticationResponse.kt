@@ -1,7 +1,8 @@
 package ru.psychologicalTesting.main.infrastructure.controllers.authentication.responses
 
-import ru.psychologicalTesting.main.infrastructure.dto.Token
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class AuthenticationResponse(
-    val token: Token
+    val token: String
 )

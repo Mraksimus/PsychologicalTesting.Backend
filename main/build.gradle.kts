@@ -27,6 +27,9 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.hocon)
+    implementation(libs.kotlinx.datetime) {
+        version { strictly("0.6.2") }
+    }
 
     detekt(libs.detekt.cli)
     detekt(libs.detekt.formatting)
@@ -68,6 +71,10 @@ dependencies {
     ksp(libs.akkurate.compiler)
 
     implementation(libs.jbcrypt)
+
+    implementation(libs.jwt)
+    implementation(libs.jwt.ktor)
+    implementation(libs.jwt.ecdsa)
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 

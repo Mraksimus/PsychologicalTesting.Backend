@@ -14,3 +14,7 @@ dependencies {
     implementation(libs.akkurate.core)
     ksp(libs.akkurate.compiler)
 }
+
+kotlin {
+    jvmToolchain(21)
+}

@@ -4,7 +4,7 @@ kotlinx-serialization = "1.9.0"
 detekt = "1.23.6"
 ksp = "2.2.21-2.0.4"
 ktor = "3.3.0"
-ktor-docs = "1.6.1-SNAPSHOT"
+ktor-docs = "2.1.0"
 koin = "4.1.0-RC1"
 koin-ktor = "4.1.0-Beta8"
 koin-compiler = "2.0.0"
@@ -17,6 +17,7 @@ flyway = "11.9.0"
 hikaricp = "6.3.0"
 kotlinx-datetime = "0.6.2"
 koog = "0.5.2"
+jwt = "1.2.1"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -38,6 +39,7 @@ detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", 
 
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
 ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
+ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = "ktor" }
 ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
 ktor-server-contentNegotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-server-openapi = { module = "io.ktor:ktor-server-openapi", version.ref = "ktor" }
@@ -74,5 +76,9 @@ koog-agents = { module = "ai.koog:koog-agents", version.ref = "koog" }
 koog-promtExecutorOllamaClient = { module = "ai.koog:prompt-executor-ollama-client", version.ref = "koog" }
 
 jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrypt" }
+
+jwt = { module = "com.appstractive:jwt-kt", version.ref = "jwt" }
+jwt-ktor = { module = "com.appstractive:ktor-server-auth-jwt", version.ref = "jwt" }
+jwt-ecdsa = { module = "com.appstractive:jwt-ecdsa-kt", version.ref = "jwt" }
 
 h2 = { module = "com.h2database:h2", version.ref = "h2" }

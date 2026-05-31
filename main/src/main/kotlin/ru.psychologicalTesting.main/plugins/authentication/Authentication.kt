@@ -1,37 +1,56 @@
 package ru.psychologicalTesting.main.plugins.authentication
 
+import com.appstractive.jwt.signatures.es256
+import dev.whyoleg.cryptography.algorithms.EC
 import io.ktor.server.application.Application
 import io.ktor.server.auth.authentication
-import io.ktor.server.auth.bearer
+import io.ktor.server.auth.jwt.jwt
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.inject
+import ru.psychologicalTesting.main.config.authentication.AuthenticationConfig
 import ru.psychologicalTesting.main.infrastructure.repositories.role.RoleRepository
 import ru.psychologicalTesting.main.infrastructure.services.authentication.AuthenticationService
-import ru.psychologicalTesting.main.infrastructure.services.authentication.results.TokenValidationResult
+import ru.psychologicalTesting.main.infrastructure.services.authentication.results.CredentialValidationResult
 
-fun Application.configureAuthentication() = authentication {
+fun Application.configureAuthentication() {
 
-    val authenticationService by this@configureAuthentication.inject<AuthenticationService>()
-    val roleRepository by this@configureAuthentication.inject<RoleRepository>()
+    val config by inject<AuthenticationConfig>()
+    val authenticationService by inject<AuthenticationService>()
+    val roleRepository by inject<RoleRepository>()
 
-    bearer("user") {
-        authenticate {
+    authentication {
+        jwt("user") {
+            val curve = authenticationService.curve
+            val encodedKey = authenticationService.publicKey
+                .encodeToByteArrayBlocking(EC.PublicKey.Format.PEM)
 
-            val result = authenticationService.validateToken(it.token)
-            if (result !is TokenValidationResult.Success) {
-                return@authenticate null
+            verifier(
+                issuer = config.issuer,
+                audience = config.audience
+            ) {
+                es256 {
+                    pem(encodedKey, curve)
+                }
             }
 
-            val (userId) = result
+            validate { credential ->
+                val result = authenticationService.validateCredential(credential)
+                if (result !is CredentialValidationResult.Success) {
+                    return@validate null
+                }
 
-            val role = transaction {
-                roleRepository.findByUserId(userId)
+                val (session) = result
+
+                val role = transaction {
+                    roleRepository.findByUserId(session.userId)
+                }
+
+                UserPrincipal(
+                    id = session.userId,
+                    role = role,
+                    session = session
+                )
             }
-
-            return@authenticate UserPrincipal(
-                id = userId,
-                role = role
-            )
         }
     }
 
