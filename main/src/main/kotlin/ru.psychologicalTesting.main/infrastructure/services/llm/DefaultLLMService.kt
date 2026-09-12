@@ -2,6 +2,7 @@ package ru.psychologicalTesting.main.infrastructure.services.llm
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -24,6 +25,10 @@ import ru.psychologicalTesting.main.infrastructure.services.llm.results.PromptRe
 import ru.psychologicalTesting.main.plugins.suspendedTransaction
 import java.util.*
 
+private const val LLM_REQUEST_TIMEOUT_MS = 120_000L
+private const val LLM_SOCKET_TIMEOUT_MS = 120_000L
+private const val LLM_CONNECT_TIMEOUT_MS = 10_000L
+
 @Single
 class DefaultLLMService(
     private val chatRepository: ChatHistoryRepository,
@@ -37,6 +42,11 @@ class DefaultLLMService(
                     ignoreUnknownKeys = true
                 }
             )
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = LLM_REQUEST_TIMEOUT_MS
+            socketTimeoutMillis = LLM_SOCKET_TIMEOUT_MS
+            connectTimeoutMillis = LLM_CONNECT_TIMEOUT_MS
         }
     }
 

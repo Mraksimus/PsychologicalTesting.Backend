@@ -16,6 +16,7 @@ import ru.psychologicalTesting.main.infrastructure.services.testing.results.Clos
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CompleteSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CreateSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.GetSessionResult
+import ru.psychologicalTesting.main.infrastructure.services.testing.results.RegenerateResultResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.UpdateAnswersResult
 import ru.psychologicalTesting.main.plugins.suspendedTransaction
 import ru.psychologicalTesting.main.utils.now
@@ -137,7 +138,9 @@ class DefaultTestingService(
         val questions = questionRepository.findAllByTestId(session.testId)
 
         val answeredIds = session.answers.filter {
-            it.selectedIndex != null
+            it.selectedIndex != null ||
+                !it.selectedIndices.isNullOrEmpty() ||
+                !it.textAnswer.isNullOrBlank()
         }.map {
             it.questionId
         }.toSet()
@@ -150,10 +153,18 @@ class DefaultTestingService(
             val answer = session.answers.first { it.questionId == question.id }
             val content = question.content
 
-            if (content is QuestionContentType.Choice && answer.selectedIndex != null) {
-                content.options[answer.selectedIndex!!].score
-            } else {
-                0
+            if (content !is QuestionContentType.Choice) {
+                return@sumOf 0
+            }
+
+            val indices = when {
+                answer.selectedIndex != null -> listOf(answer.selectedIndex!!)
+                !answer.selectedIndices.isNullOrEmpty() -> answer.selectedIndices!!
+                else -> emptyList()
+            }
+
+            indices.sumOf { idx ->
+                content.options.getOrNull(idx)?.score ?: 0
             }
         }
 
@@ -164,14 +175,10 @@ class DefaultTestingService(
             totalScore = totalScore,
         )
 
-        val llmResponse = if (requestResult is PromptResult.Success) {
-            requestResult.llmResponse
-        } else {
-            return CompleteSessionResult.LLMRequestError
-        }
+        val llmMessage = (requestResult as? PromptResult.Success)?.llmResponse?.message
 
         val updatedSession = session.copy(
-            result = llmResponse.message,
+            result = llmMessage,
             status = TestingSession.Status.COMPLETED,
             closedAt = LocalDateTime.now()
         )
@@ -188,6 +195,77 @@ class DefaultTestingService(
         }
 
         return CompleteSessionResult.Success(
+            session = FullTestingSession(
+                id = updatedSession.id,
+                userId = updatedSession.userId,
+                testId = updatedSession.testId,
+                questions = questions,
+                answers = updatedSession.answers,
+                result = updatedSession.result,
+                status = updatedSession.status,
+                createdAt = updatedSession.createdAt,
+                closedAt = updatedSession.closedAt,
+            )
+        )
+    }
+
+    override suspend fun regenerateResult(
+        sessionId: UUID
+    ): RegenerateResultResult {
+
+        val session = sessionRepository.findOneById(sessionId)
+            ?: return RegenerateResultResult.SessionNotFound
+
+        if (session.status != TestingSession.Status.COMPLETED) {
+            return RegenerateResultResult.SessionNotCompleted
+        }
+
+        val test = testRepository.findOneById(session.testId)
+            ?: return RegenerateResultResult.TestNotFound
+
+        val questions = questionRepository.findAllByTestId(session.testId)
+
+        val totalScore = questions.sumOf { question ->
+            val answer = session.answers.firstOrNull { it.questionId == question.id }
+                ?: return@sumOf 0
+            val content = question.content
+
+            if (content !is QuestionContentType.Choice) {
+                return@sumOf 0
+            }
+
+            val indices = when {
+                answer.selectedIndex != null -> listOf(answer.selectedIndex!!)
+                !answer.selectedIndices.isNullOrEmpty() -> answer.selectedIndices!!
+                else -> emptyList()
+            }
+
+            indices.sumOf { idx ->
+                content.options.getOrNull(idx)?.score ?: 0
+            }
+        }
+
+        val requestResult = llmService.sendTestResult(
+            test = test,
+            questions = questions,
+            answers = session.answers,
+            totalScore = totalScore,
+        )
+
+        val llmMessage = (requestResult as? PromptResult.Success)?.llmResponse?.message
+            ?: return RegenerateResultResult.LLMRequestError
+
+        val updatedSession = session.copy(result = llmMessage)
+
+        val isUpdated = suspendedTransaction {
+            sessionRepository.update(id = sessionId, dto = updatedSession)
+        }
+
+        if (!isUpdated) {
+            return RegenerateResultResult.SessionUpdateError
+        }
+
+        return RegenerateResultResult.Success(
             session = FullTestingSession(
                 id = updatedSession.id,
                 userId = updatedSession.userId,

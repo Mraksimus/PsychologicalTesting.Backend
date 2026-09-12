@@ -16,6 +16,9 @@ import ru.psychologicalTesting.main.infrastructure.models.MessageModule
 import ru.psychologicalTesting.main.infrastructure.models.RoleModel
 import ru.psychologicalTesting.main.infrastructure.models.SessionModel
 import ru.psychologicalTesting.main.infrastructure.models.UserModel
+import ru.psychologicalTesting.main.infrastructure.models.category.CategoryModel
+import ru.psychologicalTesting.main.infrastructure.models.survey.SurveyModel
+import ru.psychologicalTesting.main.infrastructure.models.survey.SurveySessionModel
 import ru.psychologicalTesting.main.infrastructure.models.testing.QuestionModel
 import ru.psychologicalTesting.main.infrastructure.models.testing.TestModel
 import ru.psychologicalTesting.main.infrastructure.models.testing.TestingSessionModel
@@ -68,7 +71,10 @@ fun main() {
         TestModel,
         QuestionModel,
         TestingSessionModel,
-        RoleModel
+        SurveyModel,
+        SurveySessionModel,
+        RoleModel,
+        CategoryModel
     )
 
     val host = System.getenv("DB_HOST") ?: "localhost"

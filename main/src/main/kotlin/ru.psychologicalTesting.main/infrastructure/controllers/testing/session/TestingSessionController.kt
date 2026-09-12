@@ -35,6 +35,7 @@ import ru.psychologicalTesting.main.infrastructure.services.testing.results.Clos
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CompleteSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CreateSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.GetSessionResult
+import ru.psychologicalTesting.main.infrastructure.services.testing.results.RegenerateResultResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.UpdateAnswersResult
 import ru.psychologicalTesting.main.plugins.authentication.UserPrincipal
 import ru.psychologicalTesting.main.plugins.suspendedTransaction
@@ -225,6 +226,47 @@ private fun Route.configureAuthenticatedRoutes() {
                         is CompleteSessionResult.TestIsNotCompleted ->
                             call.respondBadRequest("Session(id=${parameters.sessionId}) is not completed")
                         is CompleteSessionResult.Success ->
+                            call.respond(HttpStatusCode.OK, result)
+                    }
+                }
+
+            }
+
+            post("/regenerate-result", ::TestingSessionScopeParameters) {
+
+                description = "Regenerate LLM result for a completed session"
+                tags = listOf(SWAGGER_TAG)
+
+                responses {
+                    HttpStatusCode.OK returns typeInfo<RegenerateResultResult.Success>()
+                    HttpStatusCode.NotFound returns typeInfo<NotFoundResponse>()
+                    HttpStatusCode.BadRequest returns typeInfo<BadRequestResponse>()
+                }
+
+                handle {
+
+                    val result = newSuspendedTransaction {
+                        testingService.regenerateResult(parameters.sessionId)
+                    }
+
+                    when (result) {
+                        is RegenerateResultResult.SessionNotFound ->
+                            call.respondNotFound("Session(id=${parameters.sessionId}) does not exist")
+                        is RegenerateResultResult.TestNotFound ->
+                            call.respondNotFound("Test not found")
+                        is RegenerateResultResult.SessionNotCompleted ->
+                            call.respondBadRequest("Session(id=${parameters.sessionId}) must be completed")
+                        is RegenerateResultResult.LLMRequestError ->
+                            call.respond(
+                                HttpStatusCode.ServiceUnavailable,
+                                "LLM request failed"
+                            )
+                        is RegenerateResultResult.SessionUpdateError ->
+                            call.respond(
+                                HttpStatusCode.InternalServerError,
+                                "Session(id=${parameters.sessionId}) update failed"
+                            )
+                        is RegenerateResultResult.Success ->
                             call.respond(HttpStatusCode.OK, result)
                     }
                 }

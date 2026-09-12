@@ -2,7 +2,6 @@ package ru.psychologicalTesting.main.infrastructure.controllers.testing.test
 
 import dev.h4kt.ktorDocs.dsl.get
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.auth.authenticate
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.Routing
@@ -16,12 +15,10 @@ import ru.psychologicalTesting.main.infrastructure.repositories.testing.test.Tes
 import ru.psychologicalTesting.main.plugins.suspendedTransaction
 
 fun Routing.configureTestRouting() = route("/testing/tests") {
-    authenticate("user") {
-        configureAuthenticatedRoutes()
-    }
+    configurePublicRoutes()
 }
 
-private fun Route.configureAuthenticatedRoutes() {
+private fun Route.configurePublicRoutes() {
 
     val testRepository by inject<TestRepository>()
 

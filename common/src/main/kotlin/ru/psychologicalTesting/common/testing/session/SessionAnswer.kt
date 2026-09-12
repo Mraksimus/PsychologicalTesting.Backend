@@ -8,5 +8,7 @@ import ru.psychologicalTesting.common.compat.SerialUUID
 @SerialName("SessionAnswer")
 data class SessionAnswer(
     val questionId: SerialUUID,
-    val selectedIndex: Int?
+    val selectedIndex: Int? = null,
+    val selectedIndices: List<Int>? = null,
+    val textAnswer: String? = null
 )

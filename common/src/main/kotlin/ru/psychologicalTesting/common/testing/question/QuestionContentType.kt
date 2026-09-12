@@ -17,7 +17,8 @@ sealed class QuestionContentType {
 
         enum class ChoiceMod {
             SINGLE,
-            SCALE
+            SCALE,
+            MULTIPLE
         }
 
     }

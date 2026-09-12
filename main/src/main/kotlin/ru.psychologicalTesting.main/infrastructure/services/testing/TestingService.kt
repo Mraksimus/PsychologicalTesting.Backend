@@ -5,6 +5,7 @@ import ru.psychologicalTesting.main.infrastructure.services.testing.results.Clos
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CompleteSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.CreateSessionResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.GetSessionResult
+import ru.psychologicalTesting.main.infrastructure.services.testing.results.RegenerateResultResult
 import ru.psychologicalTesting.main.infrastructure.services.testing.results.UpdateAnswersResult
 import java.util.*
 
@@ -27,6 +28,10 @@ interface TestingService {
     suspend fun completeSession(
         sessionId: UUID
     ): CompleteSessionResult
+
+    suspend fun regenerateResult(
+        sessionId: UUID
+    ): RegenerateResultResult
 
     fun closeSession(
         sessionId: UUID

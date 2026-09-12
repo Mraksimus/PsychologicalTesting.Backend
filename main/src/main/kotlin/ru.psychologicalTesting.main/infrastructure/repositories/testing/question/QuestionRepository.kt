@@ -14,6 +14,10 @@ interface QuestionRepository {
         id: UUID
     ): List<ExistingQuestion>
 
+    fun findAllBySurveyId(
+        id: UUID
+    ): List<ExistingQuestion>
+
     fun update(
         id: UUID,
         dto: NewQuestion
