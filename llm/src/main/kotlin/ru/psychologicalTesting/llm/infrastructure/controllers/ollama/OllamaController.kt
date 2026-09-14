@@ -120,7 +120,8 @@ private fun Route.configureChatRoutes() {
 
                 system(ollamaConfig.testTranscriptionSystemPrompt)
 
-                system("Информация о тесте: ${Json.encodeToString(test)}")
+                system("Полная информация о тесте: ${Json.encodeToString(test)}")
+                system("Информация о том, как этот тест интерпретировать: ${Json.encodeToString(test.transcript)}")
                 system("Вопросы теста и варианты ответов: ${Json.encodeToString(questions)}")
                 system("Ответы пользователя: ${Json.encodeToString(answers)}")
                 system("Итоговое количество баллов: ${Json.encodeToString(totalScore)}")
