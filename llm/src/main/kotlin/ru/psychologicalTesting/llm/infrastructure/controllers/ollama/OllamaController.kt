@@ -119,10 +119,10 @@ private fun Route.configureChatRoutes() {
 
                 system(ollamaConfig.testTranscriptionSystemPrompt)
 
-                system("Полная информация о тесте: ${Json.encodeToString(test)}")
-                system("Информация о том, как этот тест интерпретировать: ${Json.encodeToString(test.transcript)}")
+                system("Название теста: ${Json.encodeToString(test.name)}")
                 system("Вопросы теста и варианты ответов: ${Json.encodeToString(questions)}")
                 system("Ответы пользователя: ${Json.encodeToString(answers)}")
+                system("Информация о том, как этот тест интерпретировать: ${Json.encodeToString(test.transcript)}")
 
             },
             model = LLModel(
