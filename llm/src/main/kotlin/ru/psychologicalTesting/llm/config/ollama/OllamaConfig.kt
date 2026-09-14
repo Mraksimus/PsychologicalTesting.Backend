@@ -4,6 +4,8 @@ interface OllamaConfig {
     val url: String
     val chatModel: String
     val testTranscriptionModel: String
+    val chatContext: Long
+    val testTranscriptionContext: Long
     val chatSystemPrompt: String
     val testTranscriptionSystemPrompt: String
 }

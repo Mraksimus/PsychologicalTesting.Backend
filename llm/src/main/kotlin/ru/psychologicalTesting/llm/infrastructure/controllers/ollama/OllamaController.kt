@@ -129,7 +129,7 @@ private fun Route.configureChatRoutes() {
                 provider = LLMProvider.Ollama,
                 id = ollamaConfig.testTranscriptionModel,
                 capabilities = listOf(),
-                contextLength = 64_000
+                contextLength = 32_000
             )
         )
 
