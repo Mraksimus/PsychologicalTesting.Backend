@@ -17,7 +17,6 @@ interface LLMService {
         test: ExistingTest,
         questions: List<ExistingQuestion>,
         answers: List<SessionAnswer>,
-        totalScore: Int
     ): PromptResult
 
 }

@@ -8,5 +8,4 @@ import kotlinx.serialization.Serializable
 data class Answer(
     val index: Int,
     val text: String,
-    val score: Int
 )

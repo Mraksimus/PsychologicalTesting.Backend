@@ -112,7 +112,6 @@ private fun Route.configureChatRoutes() {
             test,
             questions,
             answers,
-            totalScore
         ) = call.receive<LLMTestTranscriptionRequest>()
 
         val response = llm().execute(
@@ -124,14 +123,13 @@ private fun Route.configureChatRoutes() {
                 system("Информация о том, как этот тест интерпретировать: ${Json.encodeToString(test.transcript)}")
                 system("Вопросы теста и варианты ответов: ${Json.encodeToString(questions)}")
                 system("Ответы пользователя: ${Json.encodeToString(answers)}")
-                system("Итоговое количество баллов: ${Json.encodeToString(totalScore)}")
 
             },
             model = LLModel(
                 provider = LLMProvider.Ollama,
                 id = ollamaConfig.testTranscriptionModel,
                 capabilities = listOf(),
-                contextLength = 32_000
+                contextLength = 64_000
             )
         )
 

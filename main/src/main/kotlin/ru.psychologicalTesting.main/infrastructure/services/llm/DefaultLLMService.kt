@@ -105,14 +105,12 @@ class DefaultLLMService(
         test: ExistingTest,
         questions: List<ExistingQuestion>,
         answers: List<SessionAnswer>,
-        totalScore: Int
     ): PromptResult {
 
         val responseBody = LLMTestTranscriptionRequest(
             test = test,
             questions = questions,
             answers = answers,
-            totalScore = totalScore
         )
 
         val response = try {

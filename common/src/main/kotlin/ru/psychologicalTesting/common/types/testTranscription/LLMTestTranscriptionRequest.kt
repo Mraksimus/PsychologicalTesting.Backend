@@ -10,5 +10,4 @@ data class LLMTestTranscriptionRequest(
     val test: ExistingTest,
     val questions: List<ExistingQuestion>,
     val answers: List<SessionAnswer>,
-    val totalScore: Int
 )

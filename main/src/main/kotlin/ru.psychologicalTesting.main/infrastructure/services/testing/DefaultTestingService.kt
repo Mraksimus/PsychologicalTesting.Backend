@@ -149,30 +149,10 @@ class DefaultTestingService(
             return CompleteSessionResult.TestIsNotCompleted
         }
 
-        val totalScore = questions.sumOf { question ->
-            val answer = session.answers.first { it.questionId == question.id }
-            val content = question.content
-
-            if (content !is QuestionContentType.Choice) {
-                return@sumOf 0
-            }
-
-            val indices = when {
-                answer.selectedIndex != null -> listOf(answer.selectedIndex!!)
-                !answer.selectedIndices.isNullOrEmpty() -> answer.selectedIndices!!
-                else -> emptyList()
-            }
-
-            indices.sumOf { idx ->
-                content.options.getOrNull(idx)?.score ?: 0
-            }
-        }
-
         val requestResult = llmService.sendTestResult(
             test = test,
             questions = questions,
             answers = session.answers,
-            totalScore = totalScore,
         )
 
         val llmMessage = (requestResult as? PromptResult.Success)?.llmResponse?.message
@@ -225,31 +205,10 @@ class DefaultTestingService(
 
         val questions = questionRepository.findAllByTestId(session.testId)
 
-        val totalScore = questions.sumOf { question ->
-            val answer = session.answers.firstOrNull { it.questionId == question.id }
-                ?: return@sumOf 0
-            val content = question.content
-
-            if (content !is QuestionContentType.Choice) {
-                return@sumOf 0
-            }
-
-            val indices = when {
-                answer.selectedIndex != null -> listOf(answer.selectedIndex!!)
-                !answer.selectedIndices.isNullOrEmpty() -> answer.selectedIndices!!
-                else -> emptyList()
-            }
-
-            indices.sumOf { idx ->
-                content.options.getOrNull(idx)?.score ?: 0
-            }
-        }
-
         val requestResult = llmService.sendTestResult(
             test = test,
             questions = questions,
             answers = session.answers,
-            totalScore = totalScore,
         )
 
         val llmMessage = (requestResult as? PromptResult.Success)?.llmResponse?.message
