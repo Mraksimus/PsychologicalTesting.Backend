@@ -28,7 +28,7 @@ data class RegisterRequest(
     companion object {
 
         private val EMAIL_REGEX = """
-            ^(?!\.)([a-z0-9._-]{1,250})(?<!\.)@([a-zA-Z0-9.-]{1,64}|[а-яА-Я0-9.-]{1,64}|xn--[a-zA-Z0-9-]{1,61})$
+            ^(?!\.)[A-Za-z0-9._%+-]{1,64}(?<!\.)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,24}$
         """.trimIndent().toRegex()
 
         val validator = Validator.suspendable<UserRepository, RegisterRequest> { userRepository ->
