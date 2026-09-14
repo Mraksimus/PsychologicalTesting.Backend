@@ -17,7 +17,8 @@ interface TestRepository {
 
     fun findAllPage(
         offset: Long,
-        limit: Int
+        limit: Int,
+        activeOnly: Boolean = false
     ): PageResponse<ExistingTest>
 
     fun update(

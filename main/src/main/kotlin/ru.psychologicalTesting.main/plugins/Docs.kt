@@ -3,12 +3,11 @@ package ru.psychologicalTesting.main.plugins
 import dev.h4kt.ktorDocs.plugin.KtorDocs
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
+import ru.psychologicalTesting.main.compat.docs.converters.JwtAuthConverter
 
 fun Application.configureDocs() = install(KtorDocs) {
 
     openApi {
-
-        version = "3.0.0"
 
         info {
             version = "1"
@@ -30,5 +29,7 @@ fun Application.configureDocs() = install(KtorDocs) {
     swagger {
         path = "/docs"
     }
+
+    authProviderConverters(JwtAuthConverter())
 
 }

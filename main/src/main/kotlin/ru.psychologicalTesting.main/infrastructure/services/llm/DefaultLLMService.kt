@@ -2,6 +2,7 @@ package ru.psychologicalTesting.main.infrastructure.services.llm
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -13,7 +14,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
 import ru.psychologicalTesting.common.messages.LLMMessage
 import ru.psychologicalTesting.common.testing.question.ExistingQuestion
-import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
+import ru.psychologicalTesting.common.testing.session.SessionAnswer
 import ru.psychologicalTesting.common.testing.test.ExistingTest
 import ru.psychologicalTesting.common.types.chat.LLMChatRequest
 import ru.psychologicalTesting.common.types.LLMResponse
@@ -23,6 +24,10 @@ import ru.psychologicalTesting.main.infrastructure.repositories.chat.ChatHistory
 import ru.psychologicalTesting.main.infrastructure.services.llm.results.PromptResult
 import ru.psychologicalTesting.main.plugins.suspendedTransaction
 import java.util.*
+
+private const val LLM_REQUEST_TIMEOUT_MS = 120_000L
+private const val LLM_SOCKET_TIMEOUT_MS = 120_000L
+private const val LLM_CONNECT_TIMEOUT_MS = 10_000L
 
 @Single
 class DefaultLLMService(
@@ -37,6 +42,11 @@ class DefaultLLMService(
                     ignoreUnknownKeys = true
                 }
             )
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = LLM_REQUEST_TIMEOUT_MS
+            socketTimeoutMillis = LLM_SOCKET_TIMEOUT_MS
+            connectTimeoutMillis = LLM_CONNECT_TIMEOUT_MS
         }
     }
 
@@ -94,13 +104,15 @@ class DefaultLLMService(
     override suspend fun sendTestResult(
         test: ExistingTest,
         questions: List<ExistingQuestion>,
-        session: ExistingTestingSession
+        answers: List<SessionAnswer>,
+        totalScore: Int
     ): PromptResult {
 
         val responseBody = LLMTestTranscriptionRequest(
             test = test,
             questions = questions,
-            session = session
+            answers = answers,
+            totalScore = totalScore
         )
 
         val response = try {

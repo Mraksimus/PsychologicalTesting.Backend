@@ -13,9 +13,14 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.main.config.database.DatabaseConfig
+import ru.psychologicalTesting.main.infrastructure.models.EmailVerificationTokenModel
 import ru.psychologicalTesting.main.infrastructure.models.MessageModule
-import ru.psychologicalTesting.main.infrastructure.models.TokenModel
+import ru.psychologicalTesting.main.infrastructure.models.RoleModel
+import ru.psychologicalTesting.main.infrastructure.models.SessionModel
 import ru.psychologicalTesting.main.infrastructure.models.UserModel
+import ru.psychologicalTesting.main.infrastructure.models.category.CategoryModel
+import ru.psychologicalTesting.main.infrastructure.models.survey.SurveyModel
+import ru.psychologicalTesting.main.infrastructure.models.survey.SurveySessionModel
 import ru.psychologicalTesting.main.infrastructure.models.testing.QuestionModel
 import ru.psychologicalTesting.main.infrastructure.models.testing.TestModel
 import ru.psychologicalTesting.main.infrastructure.models.testing.TestingSessionModel
@@ -62,12 +67,17 @@ fun applyDatabaseMigrations(
 fun main() {
 
     val tables: Array<Table> = arrayOf(
-        TokenModel,
+        SessionModel,
         UserModel,
         MessageModule,
         TestModel,
         QuestionModel,
-        TestingSessionModel
+        TestingSessionModel,
+        SurveyModel,
+        SurveySessionModel,
+        RoleModel,
+        CategoryModel,
+        EmailVerificationTokenModel
     )
 
     val host = System.getenv("DB_HOST") ?: "localhost"

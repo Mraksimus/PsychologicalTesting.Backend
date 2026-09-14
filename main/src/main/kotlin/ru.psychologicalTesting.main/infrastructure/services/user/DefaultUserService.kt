@@ -2,11 +2,15 @@ package ru.psychologicalTesting.main.infrastructure.services.user
 
 import org.koin.core.annotation.Single
 import org.mindrot.jbcrypt.BCrypt
+import ru.psychologicalTesting.common.survey.session.SurveySession
 import ru.psychologicalTesting.common.testing.session.TestingSession
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
+import ru.psychologicalTesting.main.infrastructure.dto.SurveySessionCard
 import ru.psychologicalTesting.main.infrastructure.dto.TestingSessionCard
 import ru.psychologicalTesting.main.infrastructure.dto.user.User
 import ru.psychologicalTesting.main.infrastructure.dto.user.UserProfile
+import ru.psychologicalTesting.main.infrastructure.repositories.survey.session.SurveySessionRepository
+import ru.psychologicalTesting.main.infrastructure.repositories.survey.survey.SurveyRepository
 import ru.psychologicalTesting.main.infrastructure.repositories.testing.session.TestingSessionRepository
 import ru.psychologicalTesting.main.infrastructure.repositories.testing.test.TestRepository
 import ru.psychologicalTesting.main.infrastructure.repositories.user.UserRepository
@@ -18,7 +22,9 @@ import java.util.*
 class DefaultUserService(
     private val userRepository: UserRepository,
     private val sessionRepository: TestingSessionRepository,
-    private val testRepository: TestRepository
+    private val testRepository: TestRepository,
+    private val surveySessionRepository: SurveySessionRepository,
+    private val surveyRepository: SurveyRepository
 ) : UserService {
 
     override fun create(
@@ -54,6 +60,21 @@ class DefaultUserService(
             it.status == TestingSession.Status.COMPLETED
         }
 
+        val surveySessionsPage = surveySessionRepository.findAllByUserIdPaged(
+            userId = userId,
+            offset = 0,
+            limit = Int.MAX_VALUE,
+        )
+        val surveySessions = surveySessionsPage.items
+
+        val inProgressSurveySessionsCount = surveySessions.count {
+            it.status == SurveySession.Status.IN_PROGRESS
+        }
+
+        val completedSurveySessionsCount = surveySessions.count {
+            it.status == SurveySession.Status.COMPLETED
+        }
+
         return GetUserProfileResult.Success(
             userProfile = UserProfile(
                 name = user.name,
@@ -63,6 +84,9 @@ class DefaultUserService(
                 sessionsCount = sessions.size,
                 inProgressSessionsCount = inProgressSessionsCount,
                 completedSessionsCount = completedSessionsCount,
+                surveySessionsCount = surveySessions.size,
+                inProgressSurveySessionsCount = inProgressSurveySessionsCount,
+                completedSurveySessionsCount = completedSurveySessionsCount,
                 registeredAt = user.registeredAt,
                 lastLoginAt = user.lastLoginAt
             )
@@ -97,6 +121,36 @@ class DefaultUserService(
             offset = sessionsPaged.offset,
             limit = sessionsPaged.limit,
             items = sessionCards,
+            total = sessionsPaged.total
+        )
+    }
+
+    override fun getAllSurveySessionCardsByUserIdPaged(
+        userId: UUID,
+        offset: Long,
+        limit: Int
+    ): PageResponse<SurveySessionCard> {
+
+        val sessionsPaged = surveySessionRepository.findAllByUserIdPaged(
+            userId,
+            offset,
+            limit
+        )
+
+        val cards = sessionsPaged.items.map { session ->
+            val survey = surveyRepository.findOneById(session.surveyId)
+            SurveySessionCard(
+                id = session.id,
+                surveyName = survey?.name ?: "—",
+                status = session.status,
+                createdAt = session.createdAt
+            )
+        }
+
+        return PageResponse(
+            offset = sessionsPaged.offset,
+            limit = sessionsPaged.limit,
+            items = cards,
             total = sessionsPaged.total
         )
     }

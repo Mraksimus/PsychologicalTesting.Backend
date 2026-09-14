@@ -1,7 +1,7 @@
 package ru.psychologicalTesting.main.infrastructure.services.testing.results
 
 import kotlinx.serialization.Serializable
-import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
+import ru.psychologicalTesting.common.testing.session.FullTestingSession
 
 sealed class CreateSessionResult {
 
@@ -9,11 +9,13 @@ sealed class CreateSessionResult {
 
     data object TestNotFound : Error()
 
+    data object TestNotActive : Error()
+
     data object TestAlreadyStarted : Error()
 
     @Serializable
     data class Success(
-        val createdSession: ExistingTestingSession
+        val createdSession: FullTestingSession
     ) : CreateSessionResult()
 
 }

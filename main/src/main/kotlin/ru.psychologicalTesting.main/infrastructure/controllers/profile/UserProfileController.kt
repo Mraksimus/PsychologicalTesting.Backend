@@ -19,6 +19,7 @@ import ru.psychologicalTesting.main.infrastructure.controllers.common.responses.
 import ru.psychologicalTesting.main.infrastructure.controllers.common.responses.respondNotFound
 import ru.psychologicalTesting.main.infrastructure.controllers.profile.requests.ChangeUserFullNameRequest
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
+import ru.psychologicalTesting.main.infrastructure.dto.SurveySessionCard
 import ru.psychologicalTesting.main.infrastructure.dto.TestingSessionCard
 import ru.psychologicalTesting.main.infrastructure.dto.user.UserProfile
 import ru.psychologicalTesting.main.infrastructure.services.user.UserService
@@ -83,6 +84,32 @@ private fun Route.configureAuthenticatedRoutes() {
 
             val result = suspendedTransaction {
                 userService.getAllSessionCardsByUserIdPaged(
+                    userId = userId,
+                    offset = parameters.offset,
+                    limit = parameters.limit
+                )
+            }
+
+            call.respond(HttpStatusCode.OK, result)
+        }
+
+    }
+
+    get("survey-sessions", ::PageParameters) {
+
+        description = "Get user survey session cards paged"
+        tags = listOf(SWAGGER_TAG)
+
+        responses {
+            HttpStatusCode.OK returns typeInfo<PageResponse<SurveySessionCard>>()
+        }
+
+        handle {
+
+            val (userId) = call.principal<UserPrincipal>()!!
+
+            val result = suspendedTransaction {
+                userService.getAllSurveySessionCardsByUserIdPaged(
                     userId = userId,
                     offset = parameters.offset,
                     limit = parameters.limit

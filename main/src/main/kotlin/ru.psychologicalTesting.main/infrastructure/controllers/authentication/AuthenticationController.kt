@@ -1,7 +1,9 @@
 package ru.psychologicalTesting.main.infrastructure.controllers.authentication
 
 import dev.h4kt.ktorDocs.dsl.post
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.plugins.origin
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -46,18 +48,23 @@ private fun Route.configurePublicRoutes() {
                 password
             ) = call.receive<RegisterRequest>()
 
+            val userAgent = call.request.headers[HttpHeaders.UserAgent].orEmpty()
+            val ipAddress = call.request.origin.remoteHost
+
             val result = suspendedTransaction {
                 authenticationService.register(
                     name = name,
                     surname = surname,
                     patronymic = patronymic,
                     email = email,
-                    password = password
+                    password = password,
+                    userAgent = userAgent,
+                    ipAddress = ipAddress
                 )
             }
 
             when (result) {
-                is RegistrationResult.Success -> call.respond(result.token)
+                is RegistrationResult.Success -> call.respond(AuthenticationResponse(result.token))
             }
 
         }
@@ -80,16 +87,21 @@ private fun Route.configurePublicRoutes() {
 
             val (email, password) = call.receive<LoginRequest>()
 
+            val userAgent = call.request.headers[HttpHeaders.UserAgent].orEmpty()
+            val ipAddress = call.request.origin.remoteHost
+
             val result = suspendedTransaction {
                 authenticationService.login(
                     email = email,
-                    password = password
+                    password = password,
+                    userAgent = userAgent,
+                    ipAddress = ipAddress
                 )
             }
 
             when (result) {
                 LoginResult.InvalidCredentials -> call.respond(HttpStatusCode.Unauthorized)
-                is LoginResult.Success -> call.respond(result.token)
+                is LoginResult.Success -> call.respond(AuthenticationResponse(result.token))
             }
 
         }
