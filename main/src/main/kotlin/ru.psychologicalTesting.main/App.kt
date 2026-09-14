@@ -14,7 +14,6 @@ import ru.psychologicalTesting.main.plugins.configureRouting
 fun main(args: Array<String>) = EngineMain.main(args)
 
 fun Application.module() {
-
     configureKoin()
 
     configureDatabase()
@@ -27,5 +26,4 @@ fun Application.module() {
 
     configureDocs()
     configureCors()
-
 }
