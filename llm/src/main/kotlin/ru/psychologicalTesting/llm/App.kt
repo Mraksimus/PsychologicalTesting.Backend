@@ -11,7 +11,6 @@ import ru.psychologicalTesting.llm.plugins.configureRouting
 fun main(args: Array<String>) = EngineMain.main(args)
 
 fun Application.module() {
-
     configureKoin()
 
     configureContentNegotiation()
@@ -21,5 +20,4 @@ fun Application.module() {
     configureCors()
 
     configureKoog()
-
 }
