@@ -25,8 +25,8 @@ import ru.psychologicalTesting.main.infrastructure.services.llm.results.PromptRe
 import ru.psychologicalTesting.main.plugins.suspendedTransaction
 import java.util.*
 
-private const val LLM_REQUEST_TIMEOUT_MS = 120_000L
-private const val LLM_SOCKET_TIMEOUT_MS = 120_000L
+private const val LLM_REQUEST_TIMEOUT_MS = 600_000L
+private const val LLM_SOCKET_TIMEOUT_MS = 600_000L
 private const val LLM_CONNECT_TIMEOUT_MS = 10_000L
 
 @Single
