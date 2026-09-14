@@ -8,6 +8,7 @@ import ai.koog.prompt.message.ContentPart
 import ai.koog.prompt.message.Message
 import ai.koog.prompt.message.RequestMetaInfo
 import ai.koog.prompt.message.ResponseMetaInfo
+import ai.koog.prompt.params.LLMParams
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -16,9 +17,11 @@ import io.ktor.server.routing.Routing
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import kotlinx.datetime.Clock
-import kotlinx.serialization.json.Json
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.common.messages.LLMMessage
+import ru.psychologicalTesting.common.testing.question.ExistingQuestion
+import ru.psychologicalTesting.common.testing.question.QuestionContentType
+import ru.psychologicalTesting.common.testing.session.SessionAnswer
 import ru.psychologicalTesting.common.types.LLMResponse
 import ru.psychologicalTesting.common.types.chat.LLMChatRequest
 import ru.psychologicalTesting.common.types.testTranscription.LLMTestTranscriptionRequest
@@ -114,16 +117,38 @@ private fun Route.configureChatRoutes() {
             answers,
         ) = call.receive<LLMTestTranscriptionRequest>()
 
+        val answersByQuestion = answers.associateBy { it.questionId }
+        val sortedQuestions = questions.sortedBy { it.position }
+
+        val questionsAndAnswers = buildString {
+            sortedQuestions.forEachIndexed { idx, question ->
+                val number = idx + 1
+                appendLine("$number. ${questionText(question)}")
+                appendLine("   Ответ: ${formatAnswer(question, answersByQuestion[question.id])}")
+                appendLine()
+            }
+        }.trimEnd()
+
+        val userPayload = buildString {
+            appendLine("Название теста: ${test.name}")
+            appendLine()
+            appendLine("Инструкция по интерпретации (расшифровка):")
+            appendLine(test.transcript.trim())
+            appendLine()
+            appendLine("Вопросы и ответы пользователя (в порядке нумерации теста):")
+            appendLine(questionsAndAnswers)
+        }
+
         val response = llm().execute(
-            prompt = prompt("test_transcription") {
-
+            prompt = prompt(
+                id = "test_transcription",
+                params = LLMParams(
+                    temperature = LLM_TEMPERATURE,
+                    maxTokens = LLM_MAX_OUTPUT_TOKENS,
+                )
+            ) {
                 system(ollamaConfig.testTranscriptionSystemPrompt)
-
-                system("Название теста: ${Json.encodeToString(test.name)}")
-                system("Вопросы теста и варианты ответов: ${Json.encodeToString(questions)}")
-                system("Ответы пользователя: ${Json.encodeToString(answers)}")
-                system("Информация о том, как этот тест интерпретировать: ${Json.encodeToString(test.transcript)}")
-
+                user(userPayload)
             },
             model = LLModel(
                 provider = LLMProvider.Ollama,
@@ -138,3 +163,40 @@ private fun Route.configureChatRoutes() {
     }
 
 }
+
+private const val LLM_TEMPERATURE: Double = 0.3
+private const val LLM_MAX_OUTPUT_TOKENS: Int = 1500
+
+private fun questionText(question: ExistingQuestion): String = when (val c = question.content) {
+    is QuestionContentType.Choice -> c.text.normalizeWhitespace()
+    is QuestionContentType.Input -> c.text.normalizeWhitespace()
+}
+
+private fun formatAnswer(
+    question: ExistingQuestion,
+    answer: SessionAnswer?
+): String {
+    if (answer == null) return "нет ответа"
+
+    return when (val c = question.content) {
+        is QuestionContentType.Choice -> {
+            val indices = when {
+                answer.selectedIndex != null -> listOf(answer.selectedIndex!!)
+                !answer.selectedIndices.isNullOrEmpty() -> answer.selectedIndices!!
+                else -> emptyList()
+            }
+
+            if (indices.isEmpty()) {
+                "нет ответа"
+            } else indices.joinToString(", ") { idx ->
+                c.options.getOrNull(idx)?.text?.normalizeWhitespace() ?: "?"
+            }
+        }
+        is QuestionContentType.Input -> {
+            answer.textAnswer?.trim().takeUnless { it.isNullOrBlank() } ?: "нет ответа"
+        }
+    }
+}
+
+private fun String.normalizeWhitespace(): String =
+    replace(Regex("\\s+"), " ").trim()
