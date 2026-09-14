@@ -23,12 +23,19 @@ repositories {
     maven("https://repo.h4kt.dev/snapshots")
 }
 
+configurations.all {
+    resolutionStrategy {
+        force(libs.kotlinx.datetime)
+    }
+}
+
 dependencies {
 
     implementation(project(":common"))
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.hocon)
+    implementation(libs.kotlinx.datetime)
 
     detekt(libs.detekt.cli)
     detekt(libs.detekt.formatting)
