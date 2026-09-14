@@ -2,6 +2,7 @@ package ru.psychologicalTesting.main.infrastructure.services.user
 
 import org.koin.core.annotation.Single
 import org.mindrot.jbcrypt.BCrypt
+import ru.psychologicalTesting.common.survey.session.SurveySession
 import ru.psychologicalTesting.common.testing.session.TestingSession
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
 import ru.psychologicalTesting.main.infrastructure.dto.SurveySessionCard
@@ -59,6 +60,21 @@ class DefaultUserService(
             it.status == TestingSession.Status.COMPLETED
         }
 
+        val surveySessionsPage = surveySessionRepository.findAllByUserIdPaged(
+            userId = userId,
+            offset = 0,
+            limit = Int.MAX_VALUE,
+        )
+        val surveySessions = surveySessionsPage.items
+
+        val inProgressSurveySessionsCount = surveySessions.count {
+            it.status == SurveySession.Status.IN_PROGRESS
+        }
+
+        val completedSurveySessionsCount = surveySessions.count {
+            it.status == SurveySession.Status.COMPLETED
+        }
+
         return GetUserProfileResult.Success(
             userProfile = UserProfile(
                 name = user.name,
@@ -68,6 +84,9 @@ class DefaultUserService(
                 sessionsCount = sessions.size,
                 inProgressSessionsCount = inProgressSessionsCount,
                 completedSessionsCount = completedSessionsCount,
+                surveySessionsCount = surveySessions.size,
+                inProgressSurveySessionsCount = inProgressSurveySessionsCount,
+                completedSurveySessionsCount = completedSurveySessionsCount,
                 registeredAt = user.registeredAt,
                 lastLoginAt = user.lastLoginAt
             )

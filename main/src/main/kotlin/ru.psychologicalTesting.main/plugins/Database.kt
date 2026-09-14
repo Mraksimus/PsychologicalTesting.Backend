@@ -12,6 +12,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.main.config.database.DatabaseConfig
+import ru.psychologicalTesting.main.infrastructure.models.EmailVerificationTokenModel
 import ru.psychologicalTesting.main.infrastructure.models.MessageModule
 import ru.psychologicalTesting.main.infrastructure.models.RoleModel
 import ru.psychologicalTesting.main.infrastructure.models.SessionModel
@@ -74,7 +75,8 @@ fun main() {
         SurveyModel,
         SurveySessionModel,
         RoleModel,
-        CategoryModel
+        CategoryModel,
+        EmailVerificationTokenModel
     )
 
     val host = System.getenv("DB_HOST") ?: "localhost"

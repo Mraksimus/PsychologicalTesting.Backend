@@ -12,6 +12,9 @@ data class UserProfile(
     val sessionsCount: Int,
     val completedSessionsCount: Int,
     val inProgressSessionsCount: Int,
+    val surveySessionsCount: Int,
+    val completedSurveySessionsCount: Int,
+    val inProgressSurveySessionsCount: Int,
     val registeredAt: LocalDateTime,
     val lastLoginAt: LocalDateTime? = null
 )

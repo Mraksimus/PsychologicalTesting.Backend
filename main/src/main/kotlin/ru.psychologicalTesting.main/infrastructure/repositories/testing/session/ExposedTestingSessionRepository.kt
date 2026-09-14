@@ -1,6 +1,8 @@
 package ru.psychologicalTesting.main.infrastructure.repositories.testing.session
 
 import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -10,6 +12,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.koin.core.annotation.Single
 import ru.psychologicalTesting.common.testing.session.ExistingTestingSession
 import ru.psychologicalTesting.common.testing.session.NewTestingSession
+import ru.psychologicalTesting.common.testing.session.SessionAnswer
 import ru.psychologicalTesting.common.testing.session.TestingSession
 import ru.psychologicalTesting.main.extensions.deleteById
 import ru.psychologicalTesting.main.extensions.updateById
@@ -17,11 +20,31 @@ import ru.psychologicalTesting.main.infrastructure.dto.AdminSessionItem
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
 import ru.psychologicalTesting.main.infrastructure.models.UserModel
 import ru.psychologicalTesting.main.infrastructure.models.testing.TestingSessionModel
+import ru.psychologicalTesting.main.infrastructure.services.crypto.CryptoService
 import ru.psychologicalTesting.main.utils.now
 import java.util.*
 
 @Single
-class ExposedTestingSessionRepository : TestingSessionRepository {
+class ExposedTestingSessionRepository(
+    private val crypto: CryptoService,
+) : TestingSessionRepository {
+
+    private val json = Json { ignoreUnknownKeys = true }
+    private val answersSerializer = ListSerializer(SessionAnswer.serializer())
+
+    private fun encodeAnswers(answers: List<SessionAnswer>): String =
+        crypto.encrypt(json.encodeToString(answersSerializer, answers))
+
+    private fun decodeAnswers(stored: String): List<SessionAnswer> {
+        if (stored.isBlank()) return emptyList()
+        val plaintext = crypto.tryDecrypt(stored)
+        return runCatching { json.decodeFromString(answersSerializer, plaintext) }
+            .getOrDefault(emptyList())
+    }
+
+    private fun encryptResult(value: String?): String? = value?.let(crypto::encrypt)
+
+    private fun decryptResult(stored: String?): String? = stored?.let(crypto::tryDecrypt)
 
     override fun create(
         dto: NewTestingSession
@@ -30,7 +53,7 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
         val insertedRow = TestingSessionModel.insert {
             it[userId] = dto.userId
             it[testId] = dto.testId
-            it[answers] = emptyList()
+            it[answers] = encodeAnswers(emptyList())
             it[status] = TestingSession.Status.IN_PROGRESS
             it[createdAt] = LocalDateTime.now()
         }
@@ -39,7 +62,7 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
             id = insertedRow[TestingSessionModel.id].value,
             userId = insertedRow[TestingSessionModel.userId].value,
             testId = insertedRow[TestingSessionModel.testId].value,
-            answers = insertedRow[TestingSessionModel.answers],
+            answers = emptyList(),
             status = insertedRow[TestingSessionModel.status],
             createdAt = insertedRow[TestingSessionModel.createdAt]
         )
@@ -153,7 +176,7 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
                     userEmail = it[UserModel.email],
                     testId = it[TestingSessionModel.testId].value,
                     status = it[TestingSessionModel.status],
-                    result = it[TestingSessionModel.result],
+                    result = decryptResult(it[TestingSessionModel.result]),
                     createdAt = it[TestingSessionModel.createdAt],
                     closedAt = it[TestingSessionModel.closedAt]
                 )
@@ -173,8 +196,8 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
     ): Boolean {
 
         val affectedRows = TestingSessionModel.updateById(id) {
-            it[TestingSessionModel.answers] = dto.answers
-            it[TestingSessionModel.result] = dto.result
+            it[TestingSessionModel.answers] = encodeAnswers(dto.answers)
+            it[TestingSessionModel.result] = encryptResult(dto.result)
             it[TestingSessionModel.status] = dto.status
             it[TestingSessionModel.closedAt] = dto.closedAt
         }
@@ -192,8 +215,8 @@ class ExposedTestingSessionRepository : TestingSessionRepository {
         id = this[TestingSessionModel.id].value,
         userId = this[TestingSessionModel.userId].value,
         testId = this[TestingSessionModel.testId].value,
-        answers = this[TestingSessionModel.answers],
-        result = this[TestingSessionModel.result],
+        answers = decodeAnswers(this[TestingSessionModel.answers]),
+        result = decryptResult(this[TestingSessionModel.result]),
         status = this[TestingSessionModel.status],
         createdAt = this[TestingSessionModel.createdAt],
         closedAt = this[TestingSessionModel.closedAt]

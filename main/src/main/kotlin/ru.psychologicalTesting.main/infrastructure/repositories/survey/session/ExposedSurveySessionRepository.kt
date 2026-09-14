@@ -1,6 +1,8 @@
 package ru.psychologicalTesting.main.infrastructure.repositories.survey.session
 
 import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -11,17 +13,34 @@ import org.koin.core.annotation.Single
 import ru.psychologicalTesting.common.survey.session.ExistingSurveySession
 import ru.psychologicalTesting.common.survey.session.NewSurveySession
 import ru.psychologicalTesting.common.survey.session.SurveySession
+import ru.psychologicalTesting.common.testing.session.SessionAnswer
 import ru.psychologicalTesting.main.extensions.deleteById
 import ru.psychologicalTesting.main.extensions.updateById
 import ru.psychologicalTesting.main.infrastructure.dto.PageResponse
 import ru.psychologicalTesting.main.infrastructure.dto.survey.AdminSurveySessionItem
 import ru.psychologicalTesting.main.infrastructure.models.UserModel
 import ru.psychologicalTesting.main.infrastructure.models.survey.SurveySessionModel
+import ru.psychologicalTesting.main.infrastructure.services.crypto.CryptoService
 import ru.psychologicalTesting.main.utils.now
 import java.util.*
 
 @Single
-class ExposedSurveySessionRepository : SurveySessionRepository {
+class ExposedSurveySessionRepository(
+    private val crypto: CryptoService,
+) : SurveySessionRepository {
+
+    private val json = Json { ignoreUnknownKeys = true }
+    private val answersSerializer = ListSerializer(SessionAnswer.serializer())
+
+    private fun encodeAnswers(answers: List<SessionAnswer>): String =
+        crypto.encrypt(json.encodeToString(answersSerializer, answers))
+
+    private fun decodeAnswers(stored: String): List<SessionAnswer> {
+        if (stored.isBlank()) return emptyList()
+        val plaintext = crypto.tryDecrypt(stored)
+        return runCatching { json.decodeFromString(answersSerializer, plaintext) }
+            .getOrDefault(emptyList())
+    }
 
     override fun create(
         dto: NewSurveySession
@@ -30,7 +49,7 @@ class ExposedSurveySessionRepository : SurveySessionRepository {
         val insertedRow = SurveySessionModel.insert {
             it[userId] = dto.userId
             it[surveyId] = dto.surveyId
-            it[answers] = emptyList()
+            it[answers] = encodeAnswers(emptyList())
             it[status] = SurveySession.Status.IN_PROGRESS
             it[createdAt] = LocalDateTime.now()
         }
@@ -39,7 +58,7 @@ class ExposedSurveySessionRepository : SurveySessionRepository {
             id = insertedRow[SurveySessionModel.id].value,
             userId = insertedRow[SurveySessionModel.userId].value,
             surveyId = insertedRow[SurveySessionModel.surveyId].value,
-            answers = insertedRow[SurveySessionModel.answers],
+            answers = emptyList(),
             status = insertedRow[SurveySessionModel.status],
             createdAt = insertedRow[SurveySessionModel.createdAt]
         )
@@ -114,13 +133,19 @@ class ExposedSurveySessionRepository : SurveySessionRepository {
 
         val totalCount = SurveySessionModel
             .selectAll()
-            .where(SurveySessionModel.surveyId eq surveyId)
+            .where {
+                (SurveySessionModel.surveyId eq surveyId)
+                    .and(SurveySessionModel.status eq SurveySession.Status.COMPLETED)
+            }
             .count()
 
         val items = SurveySessionModel
             .innerJoin(UserModel)
             .selectAll()
-            .where { SurveySessionModel.surveyId eq surveyId }
+            .where {
+                (SurveySessionModel.surveyId eq surveyId)
+                    .and(SurveySessionModel.status eq SurveySession.Status.COMPLETED)
+            }
             .orderBy(SurveySessionModel.createdAt to SortOrder.DESC)
             .offset(offset)
             .limit(limit)
@@ -138,7 +163,7 @@ class ExposedSurveySessionRepository : SurveySessionRepository {
                     userEmail = it[UserModel.email],
                     surveyId = it[SurveySessionModel.surveyId].value,
                     status = it[SurveySessionModel.status],
-                    answers = it[SurveySessionModel.answers],
+                    answers = decodeAnswers(it[SurveySessionModel.answers]),
                     createdAt = it[SurveySessionModel.createdAt],
                     closedAt = it[SurveySessionModel.closedAt],
                 )
@@ -157,7 +182,7 @@ class ExposedSurveySessionRepository : SurveySessionRepository {
         dto: ExistingSurveySession
     ): Boolean {
         val affectedRows = SurveySessionModel.updateById(id) {
-            it[SurveySessionModel.answers] = dto.answers
+            it[SurveySessionModel.answers] = encodeAnswers(dto.answers)
             it[SurveySessionModel.status] = dto.status
             it[SurveySessionModel.closedAt] = dto.closedAt
         }
@@ -174,7 +199,7 @@ class ExposedSurveySessionRepository : SurveySessionRepository {
         id = this[SurveySessionModel.id].value,
         userId = this[SurveySessionModel.userId].value,
         surveyId = this[SurveySessionModel.surveyId].value,
-        answers = this[SurveySessionModel.answers],
+        answers = decodeAnswers(this[SurveySessionModel.answers]),
         status = this[SurveySessionModel.status],
         createdAt = this[SurveySessionModel.createdAt],
         closedAt = this[SurveySessionModel.closedAt]

@@ -15,6 +15,7 @@ import ru.psychologicalTesting.main.infrastructure.controllers.admin.user.config
 import ru.psychologicalTesting.main.infrastructure.controllers.authentication.configureAuthenticationRouting
 import ru.psychologicalTesting.main.infrastructure.controllers.category.configureCategoryRouting
 import ru.psychologicalTesting.main.infrastructure.controllers.chat.configureChatRouting
+import ru.psychologicalTesting.main.infrastructure.controllers.email.configureEmailVerificationRouting
 import ru.psychologicalTesting.main.infrastructure.controllers.profile.conffigureUserProfileRouting
 import ru.psychologicalTesting.main.infrastructure.controllers.survey.session.configureSurveySessionRouting
 import ru.psychologicalTesting.main.infrastructure.controllers.survey.survey.configureSurveyRouting
@@ -40,4 +41,5 @@ fun Application.configureRouting() = routing {
     configureCategoryRouting()
     configureAdminCategoryRouting()
     configureAdminStatisticsRouting()
+    configureEmailVerificationRouting()
 }

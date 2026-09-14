@@ -18,6 +18,7 @@ hikaricp = "6.3.0"
 kotlinx-datetime = "0.6.2"
 koog = "0.5.2"
 jwt = "1.2.1"
+apache-commons-email = "1.6.0"
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -82,3 +83,5 @@ jwt-ktor = { module = "com.appstractive:ktor-server-auth-jwt", version.ref = "jw
 jwt-ecdsa = { module = "com.appstractive:jwt-ecdsa-kt", version.ref = "jwt" }
 
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
+
+apache-commons-email = { module = "org.apache.commons:commons-email", version.ref = "apache-commons-email" }

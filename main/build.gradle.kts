@@ -27,6 +27,7 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.hocon)
+    implementation(libs.apache.commons.email)
     implementation(libs.kotlinx.datetime) {
         version { strictly("0.6.2") }
     }

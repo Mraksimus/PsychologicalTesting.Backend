@@ -16,6 +16,7 @@ object UserModel : UUIDTable("user") {
     val password = text("password")
     val registeredAt = datetime("registered_at").default(LocalDateTime.now())
     val lastLoginAt = datetime("last_login_at").nullable()
+    val emailVerifiedAt = datetime("email_verified_at").nullable()
     val roleId = reference(
         name = "role_id",
         foreign = RoleModel,
