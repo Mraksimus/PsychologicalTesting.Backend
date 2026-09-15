@@ -143,8 +143,8 @@ private fun Route.configureChatRoutes() {
             prompt = prompt(
                 id = "test_transcription",
                 params = LLMParams(
-                    temperature = LLM_TEMPERATURE,
-                    maxTokens = LLM_MAX_OUTPUT_TOKENS,
+                    temperature = ollamaConfig.testTranscriptionTemperature,
+                    maxTokens = ollamaConfig.testTranscriptionMaxOutputTokens,
                 )
             ) {
                 system(ollamaConfig.testTranscriptionSystemPrompt)
@@ -163,9 +163,6 @@ private fun Route.configureChatRoutes() {
     }
 
 }
-
-private const val LLM_TEMPERATURE: Double = 0.3
-private const val LLM_MAX_OUTPUT_TOKENS: Int = 1500
 
 private fun questionText(question: ExistingQuestion): String = when (val c = question.content) {
     is QuestionContentType.Choice -> c.text.normalizeWhitespace()

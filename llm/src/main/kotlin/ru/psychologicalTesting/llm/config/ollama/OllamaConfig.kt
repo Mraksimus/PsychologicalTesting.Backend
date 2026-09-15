@@ -8,4 +8,6 @@ interface OllamaConfig {
     val testTranscriptionContext: Long
     val chatSystemPrompt: String
     val testTranscriptionSystemPrompt: String
+    val testTranscriptionTemperature: Double
+    val testTranscriptionMaxOutputTokens: Int
 }
