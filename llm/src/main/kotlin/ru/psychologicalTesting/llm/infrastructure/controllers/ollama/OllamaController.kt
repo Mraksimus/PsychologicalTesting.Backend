@@ -1,5 +1,3 @@
-@file:OptIn(kotlin.time.ExperimentalTime::class)
-
 package ru.psychologicalTesting.llm.infrastructure.controllers.ollama
 
 import ai.koog.ktor.llm
