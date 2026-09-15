@@ -6,6 +6,7 @@ import ai.koog.ktor.llm
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
+import ai.koog.prompt.llm.OllamaLLMProvider
 import ai.koog.prompt.params.LLMParams
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
@@ -115,19 +116,16 @@ private fun Route.configureChatRoutes() {
         val response = llm().execute(
             prompt = prompt(
                 id = "test_transcription",
-                params = LLMParams(
-                    temperature = ollamaConfig.testTranscriptionTemperature,
-                    maxTokens = ollamaConfig.testTranscriptionMaxOutputTokens,
-                )
+                params = LLMParams(temperature = ollamaConfig.testTranscriptionTemperature)
             ) {
                 system(ollamaConfig.testTranscriptionSystemPrompt)
                 user(userPayload)
             },
             model = LLModel(
-                provider = LLMProvider.Ollama,
+                provider = OllamaLLMProvider,
                 id = ollamaConfig.testTranscriptionModel,
-                capabilities = listOf(),
-                contextLength = ollamaConfig.testTranscriptionContext
+                contextLength = ollamaConfig.testTranscriptionContext,
+                maxOutputTokens = ollamaConfig.testTranscriptionMaxOutputTokens
             )
         )
 

@@ -12,5 +12,5 @@ data class SerialOllamaConfig(
     override val chatSystemPrompt: String,
     override val testTranscriptionSystemPrompt: String,
     override val testTranscriptionTemperature: Double,
-    override val testTranscriptionMaxOutputTokens: Int,
+    override val testTranscriptionMaxOutputTokens: Long,
 ) : OllamaConfig

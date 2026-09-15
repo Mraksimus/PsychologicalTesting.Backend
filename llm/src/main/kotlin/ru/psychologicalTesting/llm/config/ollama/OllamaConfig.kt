@@ -9,5 +9,5 @@ interface OllamaConfig {
     val chatSystemPrompt: String
     val testTranscriptionSystemPrompt: String
     val testTranscriptionTemperature: Double
-    val testTranscriptionMaxOutputTokens: Int
+    val testTranscriptionMaxOutputTokens: Long
 }
