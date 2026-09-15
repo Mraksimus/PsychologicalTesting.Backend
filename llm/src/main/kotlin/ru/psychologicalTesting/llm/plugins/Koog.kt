@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.time.ExperimentalTime::class)
+
 package ru.psychologicalTesting.llm.plugins
 
 import ai.koog.ktor.Koog
@@ -24,7 +26,7 @@ fun Application.configureKoog() = install(Koog) {
                 provider = LLMProvider.Ollama,
                 id = ollamaConfig.chatModel,
                 capabilities = listOf(),
-                contextLength = 32_000
+                contextLength = ollamaConfig.chatContext
             )
         }
 

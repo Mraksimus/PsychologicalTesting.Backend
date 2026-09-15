@@ -1,13 +1,11 @@
+@file:OptIn(kotlin.time.ExperimentalTime::class)
+
 package ru.psychologicalTesting.llm.infrastructure.controllers.ollama
 
 import ai.koog.ktor.llm
 import ai.koog.prompt.dsl.prompt
 import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
-import ai.koog.prompt.message.ContentPart
-import ai.koog.prompt.message.Message
-import ai.koog.prompt.message.RequestMetaInfo
-import ai.koog.prompt.message.ResponseMetaInfo
 import ai.koog.prompt.params.LLMParams
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
@@ -16,7 +14,6 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import kotlinx.datetime.Clock
 import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.common.messages.LLMMessage
 import ru.psychologicalTesting.common.testing.question.ExistingQuestion
@@ -49,29 +46,6 @@ private fun Route.configureChatRoutes() {
 
         val request = call.receive<LLMChatRequest>()
 
-        val koogMessages = request.messages.map { messages ->
-            when (messages.role) {
-                LLMMessage.Role.SYSTEM -> Message.System(
-                    parts = listOf(ContentPart.Text(messages.content)),
-                    metaInfo = RequestMetaInfo(
-                        timestamp = Clock.System.now()
-                    )
-                )
-                LLMMessage.Role.USER -> Message.User(
-                    parts = listOf(ContentPart.Text(messages.content)),
-                    metaInfo = RequestMetaInfo(
-                        timestamp = Clock.System.now()
-                    )
-                )
-                LLMMessage.Role.ASSISTANT -> Message.Assistant(
-                    parts = listOf(ContentPart.Text(messages.content)),
-                    metaInfo = ResponseMetaInfo(
-                        timestamp = Clock.System.now()
-                    )
-                )
-            }
-        }
-
         val response = llm().execute(
             prompt = prompt("chat") {
 
@@ -96,8 +70,7 @@ private fun Route.configureChatRoutes() {
             )
         )
 
-        val text = response.joinToString(separator = "") { it.content }
-        call.respond(HttpStatusCode.OK, LLMResponse(text))
+        call.respond(HttpStatusCode.OK, LLMResponse(response.toString()))
     }
 
     /**
@@ -158,8 +131,7 @@ private fun Route.configureChatRoutes() {
             )
         )
 
-        val text = response.joinToString(separator = "") { it.content }
-        call.respond(HttpStatusCode.OK, LLMResponse(text))
+        call.respond(HttpStatusCode.OK, LLMResponse(response.toString()))
     }
 
 }
