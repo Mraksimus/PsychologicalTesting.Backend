@@ -70,7 +70,7 @@ private fun Route.configureChatRoutes() {
             )
         )
 
-        call.respond(HttpStatusCode.OK, LLMResponse(response.toString()))
+        call.respond(HttpStatusCode.OK, LLMResponse(response.first().content))
     }
 
     /**
@@ -131,7 +131,7 @@ private fun Route.configureChatRoutes() {
             )
         )
 
-        call.respond(HttpStatusCode.OK, LLMResponse(response.toString()))
+        call.respond(HttpStatusCode.OK, LLMResponse(response.first().content))
     }
 
 }
