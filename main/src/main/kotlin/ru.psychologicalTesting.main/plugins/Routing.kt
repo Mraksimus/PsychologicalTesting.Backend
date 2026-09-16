@@ -3,6 +3,7 @@ package ru.psychologicalTesting.main.plugins
 import io.ktor.server.application.Application
 import io.ktor.server.routing.routing
 import ru.psychologicalTesting.main.infrastructure.controllers.admin.category.configureAdminCategoryRouting
+import ru.psychologicalTesting.main.infrastructure.controllers.admin.me.configureAdminMeRouting
 import ru.psychologicalTesting.main.infrastructure.controllers.admin.role.configureAdminRoleRouting
 import ru.psychologicalTesting.main.infrastructure.controllers.admin.statistics.configureAdminStatisticsRouting
 import ru.psychologicalTesting.main.infrastructure.controllers.admin.survey.configureAdminSurveyRouting
@@ -41,5 +42,6 @@ fun Application.configureRouting() = routing {
     configureCategoryRouting()
     configureAdminCategoryRouting()
     configureAdminStatisticsRouting()
+    configureAdminMeRouting()
     configureEmailVerificationRouting()
 }

@@ -14,6 +14,7 @@ import org.koin.ktor.ext.inject
 import ru.psychologicalTesting.main.infrastructure.controllers.authentication.requests.LoginRequest
 import ru.psychologicalTesting.main.infrastructure.controllers.authentication.requests.RegisterRequest
 import ru.psychologicalTesting.main.infrastructure.controllers.authentication.responses.AuthenticationResponse
+import ru.psychologicalTesting.main.infrastructure.repositories.role.RoleRepository
 import ru.psychologicalTesting.main.infrastructure.services.authentication.AuthenticationService
 import ru.psychologicalTesting.main.infrastructure.services.authentication.results.LoginResult
 import ru.psychologicalTesting.main.infrastructure.services.authentication.results.RegistrationResult
@@ -26,6 +27,7 @@ fun Routing.configureAuthenticationRouting() = route("/auth") {
 private fun Route.configurePublicRoutes() {
 
     val authenticationService by inject<AuthenticationService>()
+    val roleRepository by inject<RoleRepository>()
 
     post("register") {
 
@@ -102,6 +104,54 @@ private fun Route.configurePublicRoutes() {
             when (result) {
                 LoginResult.InvalidCredentials -> call.respond(HttpStatusCode.Unauthorized)
                 is LoginResult.Success -> call.respond(AuthenticationResponse(result.token))
+            }
+
+        }
+
+    }
+
+    post("admin/login") {
+
+        description = "Log into the admin panel. Fails with 403 if the user has no admin permissions."
+        tags = listOf("Authentication")
+
+        requestBody = typeInfo<LoginRequest>()
+
+        responses {
+            HttpStatusCode.OK returns typeInfo<AuthenticationResponse>()
+            HttpStatusCode.Unauthorized returns nothing
+            HttpStatusCode.Forbidden returns nothing
+        }
+
+        handle {
+
+            val (email, password) = call.receive<LoginRequest>()
+
+            val userAgent = call.request.headers[HttpHeaders.UserAgent].orEmpty()
+            val ipAddress = call.request.origin.remoteHost
+
+            val result = suspendedTransaction {
+                authenticationService.login(
+                    email = email,
+                    password = password,
+                    userAgent = userAgent,
+                    ipAddress = ipAddress
+                )
+            }
+
+            when (result) {
+                LoginResult.InvalidCredentials -> call.respond(HttpStatusCode.Unauthorized)
+                is LoginResult.Success -> {
+                    val role = suspendedTransaction {
+                        roleRepository.findByUserId(result.session.userId)
+                    }
+                    val perms = role?.permissions.orEmpty()
+                    if (perms.isEmpty()) {
+                        call.respond(HttpStatusCode.Forbidden)
+                    } else {
+                        call.respond(AuthenticationResponse(result.token))
+                    }
+                }
             }
 
         }
